@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.ButtonBox;
 import frc.robot.Constants;
 import frc.robot.DashboardButtonBox;
 import frc.robot.Robot;
@@ -21,8 +20,8 @@ import frc.robot.commands.Intake.SetIntakePosition;
 import frc.robot.commands.arm.SetArmAngle;
 import frc.robot.commands.elevator.SetElevatorPosition;
 import frc.robot.commands.manipulator.SetManipulatorWheelSpeed;
-import frc.robot.subsystems.RobotMode;
-import frc.robot.subsystems.RobotMode.DriveMode;
+import frc.robot.subsystems.robotControl.RobotControl;
+import frc.robot.utils.DrivetrainPublisher;
 import frc.robot.utils.Utils.ReefPosition;
 
 public class CoralReefAlignPoseAuton extends SequentialCommandGroup{
@@ -96,15 +95,23 @@ public class CoralReefAlignPoseAuton extends SequentialCommandGroup{
         commandMap.put("3", new L3());
         commandMap.put("4", new L4());
 
-        leftReefAlign = new InstantCommand(() -> {Robot.robotMode.setDriveModeCommand(new AlignWithLeftReefAuton(targetReef));});
-        rightReefAlign = new InstantCommand(() -> {Robot.robotMode.setDriveModeCommand(new AlignWithRightReefAuton(targetReef));});
+        leftReefAlign = new InstantCommand(() -> {
+            RobotControl.setDriveModeCommand(new AlignWithLeftReefAuton(targetReef));});
+        rightReefAlign = new InstantCommand(() -> {RobotControl.setDriveModeCommand(new AlignWithRightReefAuton(targetReef));});
 
         addCommands(
             new ConditionalCommand(leftReefAlign, rightReefAlign, () -> leftAlign),
             new SelectCommand<String>(commandMap, () -> reefLevel),
             new WaitUntilCommand(() -> isAlignCommandFinsihed()).withTimeout(1),
-            new InstantCommand(() -> {Robot.drivetrain.setControl(new SwerveRequest.RobotCentric().withVelocityX(0).withVelocityY(0).withRotationalRate(0));}),
-            new InstantCommand(() -> {Robot.robotMode.setCurrentMode(RobotMode.scoreCoralPose);})
+            new InstantCommand(() -> {
+                DrivetrainPublisher.setSuppliers(
+                        () -> 0,
+                        () -> 0,
+                        () -> 0,
+                        () -> true
+                );
+            }),
+            new InstantCommand(() -> {RobotControl.setCurrentMode(RobotControl.scoreCoralPose);})
         );
 
         addRequirements(Robot.arm, Robot.climber, Robot.intake, Robot.manipulator, Robot.elevator);
@@ -115,6 +122,6 @@ public class CoralReefAlignPoseAuton extends SequentialCommandGroup{
     }
 
     public boolean isAlignCommandFinsihed() {
-        return Robot.robotMode.isDriveCommandFinished();
+        return RobotControl.isDriveCommandFinished();
     }
 }

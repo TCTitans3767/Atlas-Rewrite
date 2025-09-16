@@ -3,7 +3,6 @@ package frc.robot.commands.AutonCommands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
-import frc.robot.utils.CommandTrigger;
 
 public class ScoreL1AutonCommand extends Command{
 

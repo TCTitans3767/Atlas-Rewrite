@@ -9,7 +9,6 @@ import frc.robot.commands.Intake.SetIntakePosition;
 import frc.robot.commands.arm.SetArmAngle;
 import frc.robot.commands.elevator.SetElevatorPosition;
 import frc.robot.commands.manipulator.SetManipulatorWheelSpeed;
-import frc.robot.utils.CommandTrigger;
 
 public class CoralStationAutonCommand extends SequentialCommandGroup{
     

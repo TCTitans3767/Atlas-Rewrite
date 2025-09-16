@@ -130,4 +130,8 @@ public class RobotControl extends SubsystemBase implements RobotControlIO{
     public static void resetRobot() {
         setCurrentMode(Commands.none());
     }
+
+    public static boolean isDriveCommandFinished() {
+        return currentDriveCommand.isFinished();
+    }
 }
