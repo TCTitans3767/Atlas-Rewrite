@@ -360,13 +360,13 @@ public final class Constants {
     }
 
     public final static class L3Measurements {
-        public final static double armAngle = 0.09;
-        public final static double elevtaorHeight = 0.46;
+        public final static double armAngle = 0.085;
+        public final static double elevtaorHeight = 0.49;
     }
 
     public final static class L2Measurements {
-        public final static double armAngle = 0.09;
-        public final static double elevtaorHeight = 0.02;
+        public final static double armAngle = 0.01;
+        public final static double elevtaorHeight = 0.05;
     }
 
 }

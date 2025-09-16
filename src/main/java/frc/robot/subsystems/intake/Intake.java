@@ -62,8 +62,8 @@ public class Intake extends SubsystemBase {
     }
 
     public void scoreL1() {
-        setIntakeWheelLeftVelocity(-30);
-        setIntakeWheelRightVelocity(-15);
+        setIntakeWheelLeftVelocity(-20);
+        setIntakeWheelRightVelocity(-30);
     }
 
     public void resetWheelSpeed() {
