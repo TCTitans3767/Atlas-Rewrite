@@ -87,7 +87,7 @@ public class ElevatorIOHardware implements ElevatorIO{
     @Override
     public void updateInputs(ElevatorIOInputs inputs) {
         BaseStatusSignal.refreshAll(elevatorHeight, elevatorVelocity, elevatorAppliedVolts, elevatorCurrent);
-        inputs.elevatorPositionMeters = elevatorHeight.getValueAsDouble();
+        inputs.elevatorPositionMeters = elevatorHeight.getValueAsDouble() / Constants.Elevator.RotationsPerMeter;
         inputs.elevatorVelocityMetersPerSec = elevatorVelocity.getValueAsDouble();
         inputs.elevatorAppliedVolts = elevatorAppliedVolts.getValueAsDouble();
         inputs.elevatorCurrent = elevatorCurrent.getValueAsDouble();

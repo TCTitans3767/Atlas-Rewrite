@@ -23,16 +23,12 @@ public class Elevator extends SubsystemBase {
         io.setHeight(meters);
     }
 
-    public double getHeight() {
-        return inputs.elevatorPositionMeters;
-    }
-
     public void setSpeed(double speed) {
         io.setSpeed(speed);
     }
 
     public double getHeightMeters() {
-        return inputs.elevatorPositionMeters / Constants.Elevator.RotationsPerMeter;
+        return inputs.elevatorPositionMeters;
     }
 
     public boolean isAtPosition() {

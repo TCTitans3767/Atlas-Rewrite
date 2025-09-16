@@ -16,17 +16,17 @@ package frc.robot;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Limelight;
-import frc.robot.subsystems.RobotLights;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIO;
 import frc.robot.subsystems.arm.ArmIOHardware;
@@ -40,6 +40,8 @@ import frc.robot.subsystems.elevator.ElevatorIOHardware;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOHardware;
+import frc.robot.subsystems.lights.RobotLights;
+import frc.robot.subsystems.limelight.Limelight;
 import frc.robot.subsystems.manipulator.Manipulator;
 import frc.robot.subsystems.manipulator.ManipulatorIO;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
@@ -78,7 +80,7 @@ public class Robot extends LoggedRobot {
 
   public final static RobotLights lights = new RobotLights();
 
-    public Robot() {
+  public Robot() {
     // Record metadata
     Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
     Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
@@ -194,6 +196,7 @@ public class Robot extends LoggedRobot {
       }
       robotControl = new RobotControl();
 
+      SmartDashboard.putData("Field", drivetrain.getField());
   }
 
   /** This function is called periodically during all modes. */
@@ -212,6 +215,7 @@ public class Robot extends LoggedRobot {
 
     // Return to non-RT thread priority (do not modify the first argument)
     // Threads.setCurrentThreadPriority(false, 10);
+      buttonBox.buttonBoxPeriodic();
   }
 
   /** This function is called once when the robot is disabled. */
@@ -225,7 +229,8 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    autonomousCommand = robotContainer.getAutonomousCommand();
+      drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(0.6, 0.6, 999999));
+      autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
@@ -235,7 +240,9 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+      Logger.recordOutput("Auton/Is Auton Command Scheduled", autonomousCommand.isScheduled());
+  }
 
   /** This function is called once when teleop is enabled. */
   @Override
@@ -244,10 +251,16 @@ public class Robot extends LoggedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    if (autonomousCommand != null) {
-      autonomousCommand.cancel();
-    }
-  }
+      drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(0.3, 0.3, 999999));
+      if (autonomousCommand != null) {
+          autonomousCommand.cancel();
+      }
+      if (RobotControl.currentCommand != null) {
+          RobotControl.setCurrentMode(RobotControl.transitPose);
+      } else {
+          RobotControl.setCurrentMode(RobotControl.initialTransitPose);
+      }
+      RobotControl.setDriveModeCommand(RobotControl.controllerDrive);  }
 
   /** This function is called periodically during operator control. */
   @Override

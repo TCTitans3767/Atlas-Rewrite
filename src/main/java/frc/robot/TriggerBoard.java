@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import frc.robot.subsystems.robotControl.RobotControl;
 
 public class TriggerBoard {
-    
+
     public static boolean isAutonActive() {return DriverStation.isDSAttached() ? DriverStation.isAutonomousEnabled() : false;}
 
     public static boolean isCoralButtonPressed() {return Robot.joystick.rightTrigger().getAsBoolean();}
@@ -38,7 +38,7 @@ public class TriggerBoard {
         return false;
     }
 
-    public static boolean isNearReef() {return Robot.drivetrain.isNearToReef();} 
+    public static boolean isNearReef() {return Robot.drivetrain.isNearToReef();}
 
     public static boolean isNearCoralStation() {return Robot.drivetrain.isNearToBlueCoralStation() || Robot.drivetrain.isNearToRedCoralStation();}
 
@@ -46,7 +46,7 @@ public class TriggerBoard {
 
     public static boolean isNearProcessor() {return Robot.drivetrain.isNearProcessor();}
 
-    public static boolean isL1Selected() {return DashboardButtonBox.getSelectedReefLevel() == 1;}
+    public static boolean isL1Selected() {return DashboardButtonBox.getSelectedLevelString().equals("1");}
 
     public static boolean isL2Selected() {return DashboardButtonBox.getSelectedReefLevel() == 2;}
 
@@ -73,7 +73,7 @@ public class TriggerBoard {
             return true;
         }
     }
-  
+
     public static boolean isCoralInIntake() {
         return Robot.intake.hasCoral();
     }

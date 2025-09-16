@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.limelight;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -19,6 +19,7 @@ import frc.robot.Robot;
 import frc.robot.subsystems.drive.Drivetrain;
 import frc.robot.utils.LimelightHelpers;
 import frc.robot.utils.LimelightHelpers.PoseEstimate;
+import org.littletonrobotics.junction.Logger;
 
 public class Limelight extends SubsystemBase{
 
@@ -132,12 +133,12 @@ public class Limelight extends SubsystemBase{
     }
 
     public void setTagFilter(int[] ids) {
-        Logger.logCameraTagFilter(limelightName, ids);
+        Logger.recordOutput(limelightName + "/Tag Filter", ids);
         LimelightHelpers.SetFiducialIDFiltersOverride(limelightName, ids);
     }
 
     public void resetTagFilter() {
-        Logger.logCameraTagFilter(limelightName, new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22});
+        Logger.recordOutput(limelightName + "/Tag Filter", new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22});
         LimelightHelpers.SetFiducialIDFiltersOverride(limelightName, new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22});
     }
 

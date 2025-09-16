@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.driveCommands.*;
 import frc.robot.commands.modes.*;
 import frc.robot.commands.transitions.*;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class RobotControl extends SubsystemBase implements RobotControlIO{
@@ -13,8 +14,8 @@ public class RobotControl extends SubsystemBase implements RobotControlIO{
     private final RobotControlIOInputsAutoLogged inputs = new RobotControlIOInputsAutoLogged();
     private final RobotControlIO io = this;
 
-    private static Command currentCommand = Commands.none();
-    private static Command currentDriveCommand = Commands.none();
+    public static Command currentCommand = Commands.none();
+    public static Command currentDriveCommand = Commands.none();
     private static Command previousCommand = Commands.none();
     private static Command previousDriveCommand = Commands.none();
 
@@ -134,4 +135,5 @@ public class RobotControl extends SubsystemBase implements RobotControlIO{
     public static boolean isDriveCommandFinished() {
         return currentDriveCommand.isFinished();
     }
+
 }
