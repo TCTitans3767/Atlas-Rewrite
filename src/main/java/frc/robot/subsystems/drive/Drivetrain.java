@@ -16,6 +16,7 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
@@ -28,6 +29,7 @@ import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -41,21 +43,25 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.generated.TunerConstants;
-import frc.robot.util.DrivetrainPublisher;
-import frc.robot.util.LocalADStarAK;
+import frc.robot.utils.DrivetrainPublisher;
+import frc.robot.utils.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class Drive extends SubsystemBase {
+public class Drivetrain extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
   static final double ODOMETRY_FREQUENCY =
       new CANBus(TunerConstants.DrivetrainConstants.CANBusName).isNetworkFD() ? 250.0 : 100.0;
@@ -106,7 +112,11 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
-  public Drive(
+  private Matrix<N3, N1> visionMeasurementStdDevs = VecBuilder.fill(3, 3, 3);
+
+  private final Field2d field = new Field2d();
+
+  public Drivetrain(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
       ModuleIO frModuleIO,
@@ -216,25 +226,42 @@ public class Drive extends SubsystemBase {
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Constants.Mode.SIM);
 
-    DrivetrainPublisher.instance.updateDrivetrain((xVel, yVel, thetaVel, acceptInputs) ->
-    {
-        if (acceptInputs.getAsBoolean()) {
-            joystickDrive(xVel, yVel, thetaVel);
-        }
-    });
+    DrivetrainPublisher.updateDrivetrain(this::recieveDriveInputs);
+    field.setRobotPose(poseEstimator.getEstimatedPosition());
 
   }
 
+  public Pigeon2 getPigeon2() {
+      return gyroIO.getPigeon2();
+  }
+
+  public Field2d getField() {
+      return field;
+  }
+
+  public void robotCentricDrive(double vX, double vY, double omega) {
+      ChassisSpeeds speeds = new ChassisSpeeds(vX * getMaxLinearSpeedMetersPerSec(), vY * getMaxLinearSpeedMetersPerSec(), omega * getMaxAngularSpeedRadPerSec());
+      boolean isFlipped =
+              DriverStation.getAlliance().isPresent()
+                      && DriverStation.getAlliance().get() == Alliance.Red;
+      runVelocity(
+              ChassisSpeeds.fromRobotRelativeSpeeds(
+                      speeds,
+                      isFlipped
+                              ? getRotation().plus(new Rotation2d(Math.PI))
+                              : getRotation()));
+  }
+
   public void joystickDrive(
-            DoubleSupplier xSupplier,
-            DoubleSupplier ySupplier,
-            DoubleSupplier omegaSupplier) {
+            double xSupplier,
+            double ySupplier,
+            double omegaSupplier) {
                     // Get linear velocity
                     Translation2d linearVelocity =
-                            getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
+                            getLinearVelocityFromJoysticks(xSupplier, ySupplier);
 
                     // Apply rotation deadband
-                    double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), 0.02);
+                    double omega = MathUtil.applyDeadband(omegaSupplier, 0.02);
 
                     // Square rotation value for more precise control
                     omega = Math.copySign(omega * omega, omega);
@@ -353,7 +380,7 @@ public class Drive extends SubsystemBase {
 
   /** Returns the measured chassis speeds of the robot. */
   @AutoLogOutput(key = "SwerveChassisSpeeds/Measured")
-  private ChassisSpeeds getChassisSpeeds() {
+  public ChassisSpeeds getChassisSpeeds() {
     return kinematics.toChassisSpeeds(getModuleStates());
   }
 
@@ -400,6 +427,12 @@ public class Drive extends SubsystemBase {
         visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
   }
 
+  public void addVisionMeasurement(Pose2d visionRobotPoseMeters) {
+      addVisionMeasurement(visionRobotPoseMeters, Timer.getFPGATimestamp(), visionMeasurementStdDevs);
+  }
+
+
+
   /** Returns the maximum linear speed in meters per sec. */
   public double getMaxLinearSpeedMetersPerSec() {
     return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -419,4 +452,53 @@ public class Drive extends SubsystemBase {
       new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
   }
+
+    public void setVisionMeasurementStdDevs(Matrix<N3, N1> visionMeasurementStdDevs) {
+        this.visionMeasurementStdDevs = visionMeasurementStdDevs;
+    }
+
+
+    public double distanceTo(Translation2d targetTranslation) {
+        return getPose().getTranslation().getDistance(targetTranslation);
+    }
+
+    public boolean isNearToReef() {
+        return getPose().getTranslation().getDistance(Constants.Field.blueReefCenter) < Constants.Drive.reefDistanceThreshold || getPose().getTranslation().getDistance(Constants.Field.redReefCenter) < Constants.Drive.reefDistanceThreshold;
+    }
+
+    public boolean isNearToBlueCoralStation() {
+        return getPose().getTranslation().getDistance(Constants.Field.blueLeftCoralStation) < Constants.Drive.coralStationDistanceThreshold || getPose().getTranslation().getDistance(Constants.Field.blueRightCoralStation) < Constants.Drive.coralStationDistanceThreshold;
+    }
+
+    public boolean isNearToRedCoralStation() {
+        return getPose().getTranslation().getDistance(Constants.Field.redLeftCoralStation) < Constants.Drive.coralStationDistanceThreshold || getPose().getTranslation().getDistance(Constants.Field.redRightCoralStation) < Constants.Drive.coralStationDistanceThreshold;
+    }
+
+    public boolean isRightStationCloser() {
+        if (Robot.getAlliance() == Alliance.Red) {
+            return getPose().getTranslation().getDistance(Constants.Field.redRightCoralStation) < getPose().getTranslation().getDistance(Constants.Field.redLeftCoralStation);
+        } else {
+            return getPose().getTranslation().getDistance(Constants.Field.blueRightCoralStation) < getPose().getTranslation().getDistance(Constants.Field.blueLeftCoralStation);
+        }
+    }
+
+    public boolean isNearCage() {
+        return false;
+    }
+
+    public boolean isNearProcessor() {
+        return false;
+    }
+
+    private void recieveDriveInputs(DoubleSupplier xVel, DoubleSupplier yVel, DoubleSupplier thetaVel, BooleanSupplier isFieldCentric, BooleanSupplier acceptInputs) {
+        if (acceptInputs.getAsBoolean()) {
+            if (isFieldCentric.getAsBoolean()) {
+                joystickDrive(xVel.getAsDouble(), yVel.getAsDouble(), thetaVel.getAsDouble());
+            } else {
+                robotCentricDrive(xVel.getAsDouble(), yVel.getAsDouble(), thetaVel.getAsDouble());
+            }
+        } else {
+            joystickDrive(0, 0, 0);
+        }
+    }
 }

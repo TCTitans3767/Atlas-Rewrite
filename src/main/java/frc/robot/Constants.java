@@ -133,6 +133,8 @@ public final class Constants {
         public final static double maxAcceleration = 200;
 
         public final static double conversonFactor = 1;
+        public static final double ODOMETRY_FREQUENCY = 100;
+        public static double error_tolerance = 0.1;
     }
   
     public static final class Elevator {
@@ -192,6 +194,7 @@ public final class Constants {
         public static final double detectionRange = 0.07;
         public static final double sensorDebounce = 0.004;
         public static final int sensorID = 24;
+        public static final double ODOMETRY_FREQUENCY = 100;
     }
 
 
@@ -217,6 +220,7 @@ public final class Constants {
         public final static double conversionFactor = 1;
 
         public final static double errorTolerance = 0.08;
+        public static final double ODOMETRY_FREQUENCY = 100;
     }
 
     public static final class Intake {
@@ -264,6 +268,8 @@ public final class Constants {
         public static final double pivotCurrentLimit = 60;
 
         public static final double pivotStowPosition = 0.32;
+
+        public static final double starWheelCircumference = 0.39898226;
 
         public static final double ODOMETRY_FREQUENCY = 100;
         public static double wheelVelocityErrorTolerance = 0.1;

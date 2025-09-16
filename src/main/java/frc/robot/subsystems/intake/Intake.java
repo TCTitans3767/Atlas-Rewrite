@@ -75,7 +75,19 @@ public class Intake extends SubsystemBase {
         setIntakeWheelRightVelocity(speed);
     }
 
+    public void setWheelPower(double power) {
+        io.setIntakeWheelSpeed(power);
+    }
+
     public boolean isWheelMotorTooHot() {
         return inputs.isLeftWheelMotorTooHot || inputs.isRightWheelMotorTooHot;
+    }
+
+    public double getWheelSpeed() {
+        return inputs.intakeWheelLeftVelocityRotationsPerSec;
+    }
+
+    public double getPivotPosition() {
+        return inputs.intakePosition;
     }
 }

@@ -1,6 +1,7 @@
 package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
@@ -18,12 +19,23 @@ public class Elevator extends SubsystemBase {
         Logger.processInputs("Elevator", inputs);
     }
 
-    public void setHeight(double meters) {
+    public void setPosition(double meters) {
         io.setHeight(meters);
+    }
+
+    public double getHeight() {
+        return inputs.elevatorPositionMeters;
     }
 
     public void setSpeed(double speed) {
         io.setSpeed(speed);
     }
 
+    public double getHeightMeters() {
+        return inputs.elevatorPositionMeters / Constants.Elevator.RotationsPerMeter;
+    }
+
+    public boolean isAtPosition() {
+        return inputs.elevatorAtSetpoint;
+    }
 }

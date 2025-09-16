@@ -1,0 +1,70 @@
+package frc.robot.commands.driveCommands;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
+import frc.robot.Robot;
+import frc.robot.commands.transitions.CoralReefAlignPose;
+import frc.robot.subsystems.robotControl.RobotControl;
+import frc.robot.utils.DrivetrainPublisher;
+
+public class AlignWithAlgae extends Command{
+
+    private final PIDController xController = new PIDController(Constants.Drive.XAlignementPIDkP, Constants.Drive.XAlignementPIDkI, Constants.Drive.XAlignementPIDkD);
+    private final PIDController yController = new PIDController(Constants.Drive.YAlignementPIDkP, Constants.Drive.YAlignementPIDkI, Constants.Drive.YAlignementPIDkD);
+    private final PIDController headingController = new PIDController(Constants.Drive.rotationAlignementPIDkP, Constants.Drive.rotationAlignementPIDkI, Constants.Drive.rotationAlignementPIDkD);
+
+    private Pose2d initialPosition;
+    private Pose2d targetPose;
+
+    private double xVelocity;
+    private double yVelocity;
+    private double rotationVelocity;
+    
+    public AlignWithAlgae() {
+
+        headingController.enableContinuousInput(-180, 180);
+        xController.setTolerance(Constants.Drive.XAlignmentTolerance);
+        yController.setTolerance(Constants.Drive.YAlignmentTolerance);
+        headingController.setTolerance(Constants.Drive.headingAlignmentTolerance);
+
+        addRequirements(Robot.drivetrain);
+    }
+
+    @Override
+    public void initialize() {
+        initialPosition = Robot.drivetrain.getPose();
+        targetPose = initialPosition.transformBy(CoralReefAlignPose.isLeftBranchSelected() || DriverStation.isAutonomousEnabled() ? new Transform2d(0, -0.19, new Rotation2d()) : new Transform2d(0, 0.19, new Rotation2d()));
+        xController.setSetpoint(targetPose.getX());
+        yController.setSetpoint(targetPose.getY());
+        headingController.setSetpoint(targetPose.getRotation().getDegrees());
+
+        DrivetrainPublisher.setSuppliers(() -> xVelocity, () -> yVelocity, () -> rotationVelocity, () -> true);
+    }
+
+    @Override
+    public void execute() {
+        xVelocity = xController.calculate(Robot.drivetrain.getPose().getX(), targetPose.getX()) + (xController.getError() < 0 ? Constants.Drive.XFeedForward : -Constants.Drive.XFeedForward);
+        yVelocity = yController.calculate(Robot.drivetrain.getPose().getY(), targetPose.getY()) + (yController.getError() < 0 ? Constants.Drive.YFeedForward : -Constants.Drive.YFeedForward);
+        rotationVelocity = headingController.calculate(Robot.drivetrain.getPose().getRotation().getDegrees()) + (headingController.getError() < 0 ? Constants.Drive.rotationalFeedForward : -Constants.Drive.rotationalFeedForward);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return isAligned();
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        RobotControl.setDriveModeCommand(RobotControl.controllerDrive);
+    }
+
+    public boolean isAligned() {
+        return xController.atSetpoint() && yController.atSetpoint();
+    }
+
+}
