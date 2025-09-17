@@ -53,6 +53,9 @@ import frc.robot.Robot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.utils.DrivetrainPublisher;
 import frc.robot.utils.LocalADStarAK;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BooleanSupplier;
@@ -226,7 +229,6 @@ public class Drivetrain extends SubsystemBase {
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Constants.Mode.SIM);
 
-    DrivetrainPublisher.updateDrivetrain(this::recieveDriveInputs);
     field.setRobotPose(poseEstimator.getEstimatedPosition());
 
   }
@@ -497,6 +499,7 @@ public class Drivetrain extends SubsystemBase {
             } else {
                 robotCentricDrive(xVel.getAsDouble(), yVel.getAsDouble(), thetaVel.getAsDouble());
             }
+            Logger.recordOutput("Drivetrain/drivetrain inputs", Arrays.toString(new Double[] {xVel.getAsDouble(), yVel.getAsDouble(), thetaVel.getAsDouble()}));
         } else {
             joystickDrive(0, 0, 0);
         }

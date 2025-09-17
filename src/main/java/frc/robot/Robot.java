@@ -72,7 +72,7 @@ public class Robot extends LoggedRobot {
 
   public static RobotControl robotControl;
 
-  public final static Limelight limelight = new Limelight("limelight-front", new Pose3d(Units.inchesToMeters(-0.548596), Units.inchesToMeters(9.66), Units.inchesToMeters(28.228805), new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-23), Units.degreesToRadians(10))));
+  public static Limelight limelight;
 
   public final static GenericHID buttonBoxController = new GenericHID(1);
   public final static CommandXboxController joystick = new CommandXboxController(0);
@@ -142,9 +142,8 @@ public class Robot extends LoggedRobot {
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
-    robotContainer = new RobotContainer();
 
-      switch (Constants.currentMode) {
+    switch (Constants.currentMode) {
           case REAL:
               // Real robot, instantiate hardware IO implementations
               drivetrain =
@@ -195,6 +194,10 @@ public class Robot extends LoggedRobot {
               break;
       }
       robotControl = new RobotControl();
+
+      limelight = new Limelight("limelight-front", new Pose3d(Units.inchesToMeters(-0.548596), Units.inchesToMeters(9.66), Units.inchesToMeters(28.228805), new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-23), Units.degreesToRadians(10))));
+
+      robotContainer = new RobotContainer();
 
       SmartDashboard.putData("Field", drivetrain.getField());
   }

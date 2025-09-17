@@ -10,6 +10,7 @@ public interface ArmIO {
         public double armVelocityRotationsPerSec = 0.0;
         public double armAppliedVolts = 0.0;
         public double armCurrent = 0.0;
+        public double armSetPoint = 0.0;
         public boolean isArmAtSetpoint = false;
         public double motionMagicError = 0.0;
     }

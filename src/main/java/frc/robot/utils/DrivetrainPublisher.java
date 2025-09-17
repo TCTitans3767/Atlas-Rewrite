@@ -5,11 +5,11 @@ import java.util.function.DoubleSupplier;
 
 public class DrivetrainPublisher {
 
-    private static DoubleSupplier xVelocitySupplier;
-    private static DoubleSupplier yVelocitySupplier;
-    private static DoubleSupplier thetaVelocitySupplier;
-    private static BooleanSupplier inFieldCentricSupplier;
-    private static BooleanSupplier acceptInputsSupplier;
+    private static DoubleSupplier xVelocitySupplier = () -> 0;
+    private static DoubleSupplier yVelocitySupplier = () -> 0;
+    private static DoubleSupplier thetaVelocitySupplier = () -> 0;
+    private static BooleanSupplier inFieldCentricSupplier = () -> true;
+    private static BooleanSupplier acceptInputsSupplier = () -> false;
 
     public DrivetrainPublisher() {
     }

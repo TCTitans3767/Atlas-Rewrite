@@ -81,7 +81,7 @@ public class TransitPose extends SequentialCommandGroup{
             addCommands(
                 new ParallelCommandGroup(
                     new SetManipulatorWheelSpeed(0),
-                    new SetArmAngle(-0.378),
+                    new SetArmAngle(-0.1),
                     new InstantCommand(() -> {Robot.intake.resetWheelSpeed();})
                 ),
                 new ParallelCommandGroup(

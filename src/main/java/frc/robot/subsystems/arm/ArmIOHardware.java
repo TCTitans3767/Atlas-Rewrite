@@ -86,6 +86,7 @@ public class ArmIOHardware implements ArmIO{
         inputs.armVelocityRotationsPerSec = armVelocity.getValueAsDouble();
         inputs.armCurrent = armCurrent.getValueAsDouble();
         inputs.armAppliedVolts = armAppliedVolts.getValueAsDouble();
+        inputs.armSetPoint = targetRotations;
         inputs.isArmAtSetpoint = MathUtil.isNear(targetRotations, inputs.armPositionRotations, Constants.Arm.errorTolerance);
         inputs.motionMagicError = armMotor.getClosedLoopError().getValueAsDouble();
     }
