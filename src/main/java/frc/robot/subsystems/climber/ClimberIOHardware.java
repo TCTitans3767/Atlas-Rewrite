@@ -81,7 +81,7 @@ public class ClimberIOHardware implements ClimberIO{
         inputs.climberCurrent = climberCurrent.getValueAsDouble();
         inputs.climberAppliedVolts = climberAppliedVolts.getValueAsDouble();
         inputs.climberSetpoint = targetRotations;
-        inputs.climberAtSetpoint = MathUtil.isNear(targetRotations, inputs.climberRotations, Constants.Climber.error_tolerance);
+        inputs.climberAtSetpoint = leftMotor.getClosedLoopError().getValueAsDouble() < Constants.Climber.error_tolerance;
     }
 
     @Override

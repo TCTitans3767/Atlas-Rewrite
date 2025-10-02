@@ -14,6 +14,7 @@ import frc.robot.Robot;
 import frc.robot.TriggerBoard;
 import frc.robot.commands.Intake.SetIntakePosition;
 import frc.robot.commands.Intake.SetIntakeWheelPower;
+import frc.robot.commands.Intake.SetIntakeWheelSpeed;
 import frc.robot.commands.arm.SetArmAngle;
 import frc.robot.commands.elevator.SetElevatorPosition;
 import frc.robot.commands.manipulator.SetManipulatorWheelSpeed;
@@ -82,7 +83,7 @@ public class TransitPose extends SequentialCommandGroup{
                 new ParallelCommandGroup(
                     new SetManipulatorWheelSpeed(0),
                     new SetArmAngle(-0.1),
-                    new InstantCommand(() -> {Robot.intake.resetWheelSpeed();})
+                    new SetIntakeWheelSpeed(0.0)
                 ),
                 new ParallelCommandGroup(
                     new SetIntakePosition(Constants.Intake.pivotStowPosition),

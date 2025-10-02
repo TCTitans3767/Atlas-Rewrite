@@ -30,6 +30,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIO;
 import frc.robot.subsystems.arm.ArmIOHardware;
+import frc.robot.subsystems.arm.ArmIOSim;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOHardware;
@@ -37,11 +38,15 @@ import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOHardware;
+import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOHardware;
+import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.lights.RobotLights;
 import frc.robot.subsystems.limelight.Limelight;
+import frc.robot.subsystems.limelight.LimelightHardware;
+import frc.robot.subsystems.limelight.LimelightSim;
 import frc.robot.subsystems.manipulator.Manipulator;
 import frc.robot.subsystems.manipulator.ManipulatorIO;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
@@ -170,10 +175,10 @@ public class Robot extends LoggedRobot {
                               new ModuleIOSim(TunerConstants.FrontRight),
                               new ModuleIOSim(TunerConstants.BackLeft),
                               new ModuleIOSim(TunerConstants.BackRight));
-              elevator = new Elevator(new ElevatorIO() {});
-              intake = new Intake(new IntakeIO() {});
+              elevator = new Elevator(new ElevatorIOSim());
+              intake = new Intake(new IntakeIOSim());
               manipulator = new Manipulator(new ManipulatorIO() {});
-              arm = new Arm(new ArmIO() {});
+              arm = new Arm(new ArmIOSim());
               climber = new Climber(new ClimberIO() {});
               break;
 
@@ -195,11 +200,15 @@ public class Robot extends LoggedRobot {
       }
       robotControl = new RobotControl();
 
-      limelight = new Limelight("limelight-front", new Pose3d(Units.inchesToMeters(-0.548596), Units.inchesToMeters(9.66), Units.inchesToMeters(28.228805), new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-23), Units.degreesToRadians(10))));
+      limelight = Constants.currentMode == Constants.Mode.SIM ? new LimelightSim() : new LimelightHardware("limelight-front", new Pose3d(Units.inchesToMeters(-0.548596), Units.inchesToMeters(9.66), Units.inchesToMeters(28.228805), new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-23), Units.degreesToRadians(10))));
 
       robotContainer = new RobotContainer();
 
       SmartDashboard.putData("Field", drivetrain.getField());
+
+      if (Constants.currentMode == Constants.Mode.SIM) {
+          RobotControl.setCurrentMode(RobotControl.initialTransitPose);
+      }
   }
 
   /** This function is called periodically during all modes. */
@@ -259,7 +268,7 @@ public class Robot extends LoggedRobot {
           autonomousCommand.cancel();
       }
       if (RobotControl.currentCommand != null) {
-          RobotControl.setCurrentMode(RobotControl.transitPose);
+          RobotControl.setCurrentMode(RobotControl.initialTransitPose);
       } else {
           RobotControl.setCurrentMode(RobotControl.initialTransitPose);
       }

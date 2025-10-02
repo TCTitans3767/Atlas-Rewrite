@@ -31,6 +31,7 @@ public interface IntakeIO {
 
         public boolean isLeftWheelMotorTooHot = false;
         public boolean isRightWheelMotorTooHot = false;
+        public double intakeError = 0.0;
     }
 
     public default void updateInputs(IntakeIOInputs inputs) {}

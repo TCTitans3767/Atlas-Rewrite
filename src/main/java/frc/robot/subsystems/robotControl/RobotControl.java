@@ -106,26 +106,25 @@ public class RobotControl extends SubsystemBase implements RobotControlIO{
        inputs.PreviousCommand = previousCommand.getName();
        inputs.CurrentDriveCommand = currentDriveCommand.getName();
        inputs.PreviousDriveCommand = previousDriveCommand.getName();
+       inputs.currentCommandRunning = currentCommand.isScheduled();
     }
 
     public static void setCurrentMode(Command command) {
-        Command temp = currentCommand;
         if (currentCommand != null) {
             currentCommand.cancel();
         }
+        previousCommand = currentCommand;
         currentCommand = command;
         currentCommand.schedule();
-        previousCommand = temp;
     }
 
     public static void setDriveModeCommand(Command command) {
-        Command temp = currentDriveCommand;
         if (currentDriveCommand != null) {
-            currentCommand.cancel();
+            currentDriveCommand.cancel();
         }
+        previousDriveCommand = currentDriveCommand;
         currentDriveCommand = command;
         currentDriveCommand.schedule();
-        previousCommand = temp;
     }
 
     public static void resetRobot() {

@@ -29,6 +29,10 @@ public class IntakeIOHardware implements IntakeIO{
 
     private final CANcoder pivotEncoder;
 
+    private final MotionMagicVoltage pivotPositionRequest = new MotionMagicVoltage(0);
+    private final MotionMagicVelocityVoltage rightWheelVelocityRequest = new MotionMagicVelocityVoltage(0);
+    private final MotionMagicVelocityVoltage leftWheelVelocityRequest = new MotionMagicVelocityVoltage(0);
+
     private double targetRotations = 0;
     private double targetLeftWheelVelocity = 0;
     private double targetRightWheelVelocity = 0;
@@ -174,6 +178,7 @@ public class IntakeIOHardware implements IntakeIO{
 
     @Override
     public void updateInputs(IntakeIOInputs inputs) {
+        BaseStatusSignal.refreshAll(intakePosition,  intakeVelocity, intakeCurrent, intakeAppliedVolts, wheelVelocityLeft, wheelVelocityRight, wheelAppliedVoltsLeft, wheelAppliedVoltsRight, wheelCurrentLeft, wheelCurrentRight);
         inputs.isGamePieceInIntake = isGamePieceInIntake.getValue();
 
         inputs.intakePosition = intakePosition.getValueAsDouble();
@@ -187,32 +192,31 @@ public class IntakeIOHardware implements IntakeIO{
         inputs.intakeWheelRightAppliedVolts = wheelAppliedVoltsRight.getValueAsDouble();
         inputs.intakeWheelRightCurrent = wheelCurrentRight.getValueAsDouble();
 
-        inputs.intakeSetPosition = targetRotations;
+        inputs.intakeSetPosition = pivotPositionRequest.Position;
         inputs.intakeWheelLeftWheelSetVelocity = targetLeftWheelVelocity;
         inputs.intakeWheelRightWheelSetVelocity = targetRightWheelVelocity;
 
-        inputs.isIntakeAtSetpoint = MathUtil.isNear(targetRotations, inputs.intakePosition, Constants.Intake.pivotErrorTolerance);
-        inputs.isIntakeWheelLeftAtSetpoint = MathUtil.isNear(targetLeftWheelVelocity, inputs.intakeWheelLeftWheelSetVelocity, Constants.Intake.wheelVelocityErrorTolerance);
-        inputs.isIntakeWheelRightAtSetpoint = MathUtil.isNear(targetRightWheelVelocity, inputs.intakeWheelRightWheelSetVelocity, Constants.Intake.wheelVelocityErrorTolerance);
+        inputs.isIntakeAtSetpoint = pivotMotor.getClosedLoopError().getValueAsDouble() < Constants.Intake.pivotErrorTolerance;
+        inputs.isIntakeWheelLeftAtSetpoint = leftWheelMotor.getClosedLoopError().getValueAsDouble() < Constants.Intake.wheelSpeedErrorTolerance;
+        inputs.isIntakeWheelRightAtSetpoint = rightWheelMotor.getClosedLoopError().getValueAsDouble() < Constants.Intake.wheelSpeedErrorTolerance;
 
         inputs.isLeftWheelMotorTooHot = leftWheelMotor.getDeviceTemp().getValueAsDouble() >= 70;
         inputs.isRightWheelMotorTooHot = rightWheelMotor.getDeviceTemp().getValueAsDouble() >= 70;
+
+        inputs.intakeError = pivotMotor.getClosedLoopError().getValueAsDouble();
     }
 
     @Override
     public void setIntakePosition(double position) {
-        pivotMotor.setControl(new MotionMagicVoltage(position));
-        targetRotations = position;
+        pivotMotor.setControl(pivotPositionRequest.withPosition(position));
     }
     @Override
     public void setIntakeWheelRightVelocity(double velocity) {
-        rightWheelMotor.setControl(new MotionMagicVelocityVoltage(velocity));
-        targetRightWheelVelocity = velocity;
+        this.rightWheelMotor.setControl(rightWheelVelocityRequest.withVelocity(velocity));
     }
     @Override
     public void setIntakeWheelLeftVelocity(double velocity) {
-        leftWheelMotor.setControl(new MotionMagicVelocityVoltage(velocity));
-        targetLeftWheelVelocity = velocity;
+        this.leftWheelMotor.setControl(leftWheelVelocityRequest.withVelocity(velocity));
     }
 
     public void setPivotSpeed(double speed) {
@@ -221,7 +225,7 @@ public class IntakeIOHardware implements IntakeIO{
 
     @Override
     public void setIntakeWheelSpeed(double speed) {
-        leftWheelMotor.set(speed);
-        rightWheelMotor.set(speed);
+        this.leftWheelMotor.setControl(leftWheelVelocityRequest.withVelocity(speed));
+        this.rightWheelMotor.setControl(rightWheelVelocityRequest.withVelocity(speed));
     }
 }

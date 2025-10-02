@@ -12,6 +12,7 @@ public interface ElevatorIO {
         public double elevatorCurrent= 0.0;
         public double elevatorSetHeightMeters = 0.0;
         public boolean elevatorAtSetpoint = false;
+        public double elevatorError = 0.0;
     }
 
     public default void updateInputs(ElevatorIOInputs inputs) {}

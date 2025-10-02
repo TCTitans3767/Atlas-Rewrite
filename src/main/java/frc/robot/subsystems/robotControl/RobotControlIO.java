@@ -10,6 +10,7 @@ public interface RobotControlIO {
         public String PreviousCommand = "";
         public String CurrentDriveCommand = "";
         public String PreviousDriveCommand = "";
+        public boolean currentCommandRunning = false;
     }
 
     public void updateInputs(RobotControlIOInputs inputs);

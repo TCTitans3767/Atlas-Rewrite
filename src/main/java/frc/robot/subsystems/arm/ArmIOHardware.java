@@ -26,6 +26,8 @@ public class ArmIOHardware implements ArmIO{
     private final MotionMagicConfigs motionMagicConfig;
     private final CANcoderConfiguration armEncoderConfig;
 
+    private final MotionMagicVoltage armMotorRequest = new MotionMagicVoltage(0.0);
+
     private double targetRotations;
     private final StatusSignal<Angle> armPosition;
     private final StatusSignal<AngularVelocity> armVelocity;
@@ -82,12 +84,13 @@ public class ArmIOHardware implements ArmIO{
 
     @Override
     public void updateInputs(ArmIOInputs inputs) {
+        BaseStatusSignal.refreshAll(armPosition, armVelocity, armCurrent, armAppliedVolts);
         inputs.armPositionRotations = armPosition.getValueAsDouble();
         inputs.armVelocityRotationsPerSec = armVelocity.getValueAsDouble();
         inputs.armCurrent = armCurrent.getValueAsDouble();
         inputs.armAppliedVolts = armAppliedVolts.getValueAsDouble();
-        inputs.armSetPoint = targetRotations;
-        inputs.isArmAtSetpoint = MathUtil.isNear(targetRotations, inputs.armPositionRotations, Constants.Arm.errorTolerance);
+        inputs.armSetPoint = armMotorRequest.Position;
+        inputs.isArmAtSetpoint = armMotor.getClosedLoopError().getValueAsDouble() < Constants.Arm.errorTolerance;
         inputs.motionMagicError = armMotor.getClosedLoopError().getValueAsDouble();
     }
 
@@ -98,7 +101,6 @@ public class ArmIOHardware implements ArmIO{
 
     @Override
     public void setArmPosition(double position) {
-        armMotor.setControl(new MotionMagicVoltage(position));
-        targetRotations = position;
+        armMotor.setControl(armMotorRequest.withPosition(position));
     }
 }

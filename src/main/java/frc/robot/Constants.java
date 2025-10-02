@@ -165,7 +165,7 @@ public final class Constants {
         public final static double metersMax = 1.23;
         public final static double metersMin = 0.020;
 
-        public final static double errorTolerance = 0.12;
+        public final static double errorTolerance = 0.05;
         public final static double zeroingSpeed = -0.05;
         public final static double zeroingThreshold = 0.01;
 
@@ -257,7 +257,7 @@ public final class Constants {
         // Conversion Factor
         public final static double pivotConversionFactor = 1;
         public final static double wheelConversionFactor = 1;
-        public static final double pivotErrorTolerance = 0.01;
+        public static final double pivotErrorTolerance = 0.03;
 
         public static final double detectionRange = 0.063;
         public static final double sensorDebounce = 0.005;
@@ -273,6 +273,7 @@ public final class Constants {
 
         public static final double ODOMETRY_FREQUENCY = 100;
         public static double wheelVelocityErrorTolerance = 0.1;
+        public static double wheelSpeedErrorTolerance = 0.03;
     }
   
 

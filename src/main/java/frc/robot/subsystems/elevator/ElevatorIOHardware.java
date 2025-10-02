@@ -91,14 +91,14 @@ public class ElevatorIOHardware implements ElevatorIO{
         inputs.elevatorVelocityMetersPerSec = elevatorVelocity.getValueAsDouble();
         inputs.elevatorAppliedVolts = elevatorAppliedVolts.getValueAsDouble();
         inputs.elevatorCurrent = elevatorCurrent.getValueAsDouble();
-        inputs.elevatorSetHeightMeters = setHeight;
-        inputs.elevatorAtSetpoint = MathUtil.isNear(inputs.elevatorSetHeightMeters, inputs.elevatorPositionMeters, Constants.Elevator.errorTolerance);
+        inputs.elevatorSetHeightMeters = motionMagicRequest.Position;
+        inputs.elevatorAtSetpoint = leftMotor.getClosedLoopError().getValueAsDouble() < Constants.Elevator.errorTolerance;
+        inputs.elevatorError = leftMotor.getClosedLoopError().getValueAsDouble();
     }
 
     @Override
     public void setHeight(double meters) {
          leftMotor.setControl(motionMagicRequest.withPosition(meters));
-         setHeight = meters;
     }
 
     @Override
