@@ -44,9 +44,7 @@ import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOHardware;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.lights.RobotLights;
-import frc.robot.subsystems.limelight.Limelight;
-import frc.robot.subsystems.limelight.LimelightHardware;
-import frc.robot.subsystems.limelight.LimelightSim;
+import frc.robot.subsystems.limelight.*;
 import frc.robot.subsystems.manipulator.Manipulator;
 import frc.robot.subsystems.manipulator.ManipulatorIO;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
@@ -164,6 +162,7 @@ public class Robot extends LoggedRobot {
               manipulator = new Manipulator(new ManipulatorIOHardware());
               arm = new Arm(new ArmIOHardware());
               climber = new Climber(new ClimberIOHardware());
+              limelight = new Limelight(new LimelightIOHardware("limelight-front", new Pose3d(Units.inchesToMeters(-0.548596), Units.inchesToMeters(9.66), Units.inchesToMeters(28.228805), new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-23), Units.degreesToRadians(10)))));
               break;
 
           case SIM:
@@ -180,6 +179,7 @@ public class Robot extends LoggedRobot {
               manipulator = new Manipulator(new ManipulatorIO() {});
               arm = new Arm(new ArmIOSim());
               climber = new Climber(new ClimberIO() {});
+              limelight = new Limelight(new LimelightIO() {});
               break;
 
           default:
@@ -196,11 +196,10 @@ public class Robot extends LoggedRobot {
               manipulator = new Manipulator(new ManipulatorIO() {});
               arm = new Arm(new ArmIO() {});
               climber = new Climber(new ClimberIO() {});
+              limelight = new Limelight(new LimelightIO() {});
               break;
       }
       robotControl = new RobotControl();
-
-      limelight = Constants.currentMode == Constants.Mode.SIM ? new LimelightSim() : new LimelightHardware("limelight-front", new Pose3d(Units.inchesToMeters(-0.548596), Units.inchesToMeters(9.66), Units.inchesToMeters(28.228805), new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-23), Units.degreesToRadians(10))));
 
       robotContainer = new RobotContainer();
 
@@ -267,11 +266,7 @@ public class Robot extends LoggedRobot {
       if (autonomousCommand != null) {
           autonomousCommand.cancel();
       }
-      if (RobotControl.currentCommand != null) {
-          RobotControl.setCurrentMode(RobotControl.initialTransitPose);
-      } else {
-          RobotControl.setCurrentMode(RobotControl.initialTransitPose);
-      }
+      RobotControl.setCurrentMode(RobotControl.initialTransitPose);
       RobotControl.setDriveModeCommand(RobotControl.controllerDrive);  }
 
   /** This function is called periodically during operator control. */

@@ -37,7 +37,6 @@ public class LimelightIOHardware implements LimelightIO{
     private boolean hasTarget = false;
     private LimelightHelpers.PoseEstimate estimatedPose;
 
-    private final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
     public LimelightIOHardware(String limelightName, Pose3d robotToLimelight) {
         this.limelightName = limelightName;
@@ -112,6 +111,7 @@ public class LimelightIOHardware implements LimelightIO{
 
     }
 
+    @Override
     public void resetIMU() {
         doEstimation = false;
 
@@ -129,139 +129,66 @@ public class LimelightIOHardware implements LimelightIO{
         doEstimation = true;
     }
 
+    @Override
     public void setTagFilter(int[] ids) {
         tagFilter = ids;
         LimelightHelpers.SetFiducialIDFiltersOverride(limelightName, ids);
     }
 
+    @Override
     public void resetTagFilter() {
         tagFilter = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22};
         LimelightHelpers.SetFiducialIDFiltersOverride(limelightName, new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22});
     }
 
+    @Override
     public double getXFromTag() {
         return LimelightHelpers.getTargetPose_RobotSpace(limelightName)[0];
     }
 
+    @Override
     public double getYFromTag() {
         return LimelightHelpers.getTargetPose_RobotSpace(limelightName)[1];
     }
 
+    @Override
     public double getZFromTag() {
         return LimelightHelpers.getTargetPose_RobotSpace(limelightName)[2];
     }
 
+    @Override
     public boolean tagIsVisible() {
         return LimelightHelpers.getTV(limelightName);
     }
 
+    @Override
     public double getTX() {
         return LimelightHelpers.getTX(limelightName);
     }
 
+    @Override
     public double getTY() {
         return LimelightHelpers.getTY(limelightName);
     }
 
+    @Override
     public void turnOffAprilTags() {
         doEstimation = false;
     }
 
+    @Override
     public void turnOnAprilTags() {
         doEstimation = true;
     }
 
+    @Override
     public void turnOffAllAprilTagsImplementation() {
         doEstimationAll = false;
     }
 
+    @Override
     public void turnOnAllAprilTagsImplementation() {
         doEstimationAll = true;
     }
 
-    public Rotation2d getTagAngleImplementation(int tagID) {
-        return fieldLayout.getTagPose(tagID).get().toPose2d().getRotation();
-    }
-
-    public Pose2d getTagPoseImplementation(int tagID) {
-        return fieldLayout.getTagPose(tagID).get().toPose2d();
-    }
-
-    public double getNearestReefAngleImplementation() {
-        if (Robot.getAlliance() == DriverStation.Alliance.Blue) {
-            List<Integer> nearestTags = Arrays.asList(Constants.ReefTagIDs.blue);
-
-            nearestTags.sort(new Comparator<Integer>() {
-
-                Drivetrain drivetrain = Robot.drivetrain;
-
-                @Override
-                public int compare(Integer tag1, Integer tag2) {
-                    double distanceToTag1 = Limelight.getTagPose(tag1).getTranslation().getDistance(drivetrain.getPose().getTranslation());
-                    double distanceToTag2 = Limelight.getTagPose(tag2).getTranslation().getDistance(drivetrain.getPose().getTranslation());
-
-                    return (int) Math.floor(distanceToTag1 - distanceToTag2);
-                }
-            });
-
-            return Limelight.getTagAngle(nearestTags.get(0)).plus(Rotation2d.fromDegrees(180)).getDegrees();
-
-        } else {
-            List<Integer> nearestTags = Arrays.asList(Constants.ReefTagIDs.red);
-
-            nearestTags.sort(new Comparator<Integer>() {
-
-                Drivetrain drivetrain = Robot.drivetrain;
-
-                @Override
-                public int compare(Integer tag1, Integer tag2) {
-                    double distanceToTag1 = Limelight.getTagPose(tag1).getTranslation().getDistance(drivetrain.getPose().getTranslation());
-                    double distanceToTag2 = Limelight.getTagPose(tag2).getTranslation().getDistance(drivetrain.getPose().getTranslation());
-
-                    return (int) Math.floor(distanceToTag1 - distanceToTag2);
-                }
-            });
-
-            return Limelight.getTagAngle(nearestTags.get(0)).plus(Rotation2d.fromDegrees(180)).getDegrees();
-        }
-    }
-
-    public int getNearestReefTagImplementation() {
-        if (Robot.getAlliance() == DriverStation.Alliance.Blue) {
-            List<Integer> nearestTags = Arrays.asList(Constants.ReefTagIDs.blue);
-
-            nearestTags.sort(new Comparator<Integer>() {
-
-                Drivetrain drivetrain = Robot.drivetrain;
-
-                @Override
-                public int compare(Integer tag1, Integer tag2) {
-                    double distanceToTag1 = Limelight.getTagPose(tag1).getTranslation().getDistance(drivetrain.getPose().getTranslation());
-                    double distanceToTag2 = Limelight.getTagPose(tag2).getTranslation().getDistance(drivetrain.getPose().getTranslation());
-
-                    return (int) Math.floor(distanceToTag1 - distanceToTag2);
-                }
-            });
-
-            return nearestTags.get(0);
-
-        } else {
-            List<Integer> nearestTags = Arrays.asList(Constants.ReefTagIDs.red);
-
-            nearestTags.sort(new Comparator<Integer>() {
-
-                Drivetrain drivetrain = Robot.drivetrain;
-
-                @Override
-                public int compare(Integer tag1, Integer tag2) {
-                    double distanceToTag1 = Limelight.getTagPose(tag1).getTranslation().getDistance(drivetrain.getPose().getTranslation());
-                    double distanceToTag2 = Limelight.getTagPose(tag2).getTranslation().getDistance(drivetrain.getPose().getTranslation());
-
-                    return (int) Math.floor(distanceToTag1 - distanceToTag2);
-                }
-            });
-
-            return nearestTags.get(0);
-        }
-    }
 }

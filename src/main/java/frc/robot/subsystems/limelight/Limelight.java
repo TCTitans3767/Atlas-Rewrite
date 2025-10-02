@@ -1,90 +1,173 @@
 package frc.robot.subsystems.limelight;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.subsystems.drive.Drivetrain;
+import frc.robot.utils.LimelightHelpers;
+import org.littletonrobotics.junction.Logger;
 
-public interface Limelight {
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
-    default void resetIMU() {
+public class Limelight extends SubsystemBase {
+
+    private final LimelightIO io;
+    private final LimelightIOInputsAutoLogged inputs = new LimelightIOInputsAutoLogged();
+
+    private static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
+
+    public Limelight(LimelightIO io) {
+        this.io = io;
     }
 
-    default void setTagFilter(int[] ids) {
+    @Override
+    public void periodic() {
+        io.updateInputs(inputs);
+        Logger.processInputs("Limelight" + inputs.limelightName, inputs);
     }
 
-    default void resetTagFilter() {
+    public void resetIMU() {
+        io.resetIMU();
     }
 
-    default double getXFromTag() {
-        return 0;
+    public void setTagFilter(int[] ids) {
+        io.setTagFilter(ids);
     }
 
-    default double getYFromTag() {
-        return 0;
+    public void resetTagFilter() {
+        io.resetTagFilter();
     }
 
-    default double getZFromTag() {
-        return 0;
+    public double getXFromTag() {
+        return io.getXFromTag();
     }
 
-    default boolean tagIsVisible() {
-        return false;
+    public double getYFromTag() {
+        return io.getYFromTag();
     }
 
-    default void initialPoseEstimates() {
+    public double getZFromTag() {
+        return io.getZFromTag();
     }
 
-    default double getTX() {
-        return 0;
+    public boolean tagIsVisible() {
+        return io.tagIsVisible();
     }
 
-    default double getTY() {
-        return 0;
+    public double getTX() {
+        return io.getTX();
     }
 
-    default void turnOffAprilTags() {
+    public double getTY() {
+        return io.getTY();
     }
 
-    default void turnOnAprilTags() {
+    public void turnOffAprilTags() {
+        io.turnOffAprilTags();
     }
 
-    static void turnOffAllAprilTags() {
-        Robot.limelight.turnOffAllAprilTagsImplementation();
+    public void turnOnAprilTags() {
+        io.turnOnAprilTags();
     }
 
-    abstract void turnOffAllAprilTagsImplementation();
-
-    static void turnOnAllAprilTags() {
-        Robot.limelight.turnOnAllAprilTagsImplementation();
+    public void turnOffAllAprilTags() {
+        io.turnOffAllAprilTagsImplementation();
     }
 
-    abstract void turnOnAllAprilTagsImplementation();
-
-    static Rotation2d getTagAngle(int tagID) {
-        return Robot.limelight.getTagAngleImplementation(tagID);
+    public void turnOnAllAprilTags() {
+        io.turnOnAllAprilTagsImplementation();
     }
 
-    abstract Rotation2d getTagAngleImplementation(int tagID);
-
-    static Pose2d getTagPose(int tagID) {
-        return Robot.limelight.getTagPoseImplementation(tagID);
+    static public Rotation2d getTagAngle(int tagID) {
+        return fieldLayout.getTagPose(tagID).get().toPose2d().getRotation();
     }
 
-    abstract Pose2d getTagPoseImplementation(int tagID);
-
-    static double getNearestReefAngle() {
-        return Robot.limelight.getNearestReefAngleImplementation();
+    static public Pose2d getTagPose(int tagID) {
+        return fieldLayout.getTagPose(tagID).get().toPose2d();
     }
 
-    abstract double getNearestReefAngleImplementation();
+    public double getNearestReefAngle() {
+        if (Robot.getAlliance() == DriverStation.Alliance.Blue) {
+            List<Integer> nearestTags = Arrays.asList(Constants.ReefTagIDs.blue);
 
-    static int getNearestReefTag() {
-        return Robot.limelight.getNearestReefTagImplementation();
+            nearestTags.sort(new Comparator<Integer>() {
+
+                Drivetrain drivetrain = Robot.drivetrain;
+
+                @Override
+                public int compare(Integer tag1, Integer tag2) {
+                    double distanceToTag1 = Limelight.getTagPose(tag1).getTranslation().getDistance(drivetrain.getPose().getTranslation());
+                    double distanceToTag2 = Limelight.getTagPose(tag2).getTranslation().getDistance(drivetrain.getPose().getTranslation());
+
+                    return (int) Math.floor(distanceToTag1 - distanceToTag2);
+                }
+            });
+
+            return Limelight.getTagAngle(nearestTags.get(0)).plus(Rotation2d.fromDegrees(180)).getDegrees();
+
+        } else {
+            List<Integer> nearestTags = Arrays.asList(Constants.ReefTagIDs.red);
+
+            nearestTags.sort(new Comparator<Integer>() {
+
+                Drivetrain drivetrain = Robot.drivetrain;
+
+                @Override
+                public int compare(Integer tag1, Integer tag2) {
+                    double distanceToTag1 = Limelight.getTagPose(tag1).getTranslation().getDistance(drivetrain.getPose().getTranslation());
+                    double distanceToTag2 = Limelight.getTagPose(tag2).getTranslation().getDistance(drivetrain.getPose().getTranslation());
+
+                    return (int) Math.floor(distanceToTag1 - distanceToTag2);
+                }
+            });
+
+            return Limelight.getTagAngle(nearestTags.get(0)).plus(Rotation2d.fromDegrees(180)).getDegrees();
+        }
     }
 
-    abstract int getNearestReefTagImplementation();
+    public int getNearestReefTagImplementation() {
+        if (Robot.getAlliance() == DriverStation.Alliance.Blue) {
+            List<Integer> nearestTags = Arrays.asList(Constants.ReefTagIDs.blue);
 
-    default void logCamera() {
+            nearestTags.sort(new Comparator<Integer>() {
 
+                Drivetrain drivetrain = Robot.drivetrain;
+
+                @Override
+                public int compare(Integer tag1, Integer tag2) {
+                    double distanceToTag1 = Limelight.getTagPose(tag1).getTranslation().getDistance(drivetrain.getPose().getTranslation());
+                    double distanceToTag2 = Limelight.getTagPose(tag2).getTranslation().getDistance(drivetrain.getPose().getTranslation());
+
+                    return (int) Math.floor(distanceToTag1 - distanceToTag2);
+                }
+            });
+
+            return nearestTags.get(0);
+
+        } else {
+            List<Integer> nearestTags = Arrays.asList(Constants.ReefTagIDs.red);
+
+            nearestTags.sort(new Comparator<Integer>() {
+
+                Drivetrain drivetrain = Robot.drivetrain;
+
+                @Override
+                public int compare(Integer tag1, Integer tag2) {
+                    double distanceToTag1 = Limelight.getTagPose(tag1).getTranslation().getDistance(drivetrain.getPose().getTranslation());
+                    double distanceToTag2 = Limelight.getTagPose(tag2).getTranslation().getDistance(drivetrain.getPose().getTranslation());
+
+                    return (int) Math.floor(distanceToTag1 - distanceToTag2);
+                }
+            });
+
+            return nearestTags.get(0);
+        }
     }
 }

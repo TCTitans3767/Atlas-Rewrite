@@ -2,9 +2,18 @@ package frc.robot.subsystems.limelight;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.Constants;
+import frc.robot.Robot;
+import frc.robot.subsystems.drive.Drivetrain;
+import frc.robot.utils.LimelightHelpers;
 import org.littletonrobotics.junction.AutoLog;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 public interface LimelightIO {
 
@@ -31,4 +40,59 @@ public interface LimelightIO {
     }
 
     default void updateInputs(LimelightIOInputs inputs) {};
+
+
+    default void resetIMU() {
+    }
+
+    default void setTagFilter(int[] ids) {
+    }
+
+    default void resetTagFilter() {
+    }
+
+    default double getXFromTag() {
+        return 0.0;
+    }
+
+    default double getYFromTag() {
+        return 0.0;
+    }
+
+    default double getZFromTag() {
+        return 0.0;
+    }
+
+    default boolean tagIsVisible() {
+        return false;
+    }
+
+    default double getTX() {
+        return 0.0;
+    }
+
+    default double getTY() {
+        return 0;
+    }
+
+    default void turnOffAprilTags() {
+    }
+
+    default void turnOnAprilTags() {
+    }
+
+    default void turnOffAllAprilTagsImplementation() {
+    }
+
+    default void turnOnAllAprilTagsImplementation() {
+    }
+
+    default Rotation2d getTagAngleImplementation(int tagID) {
+        return new Rotation2d();
+    }
+
+    default Pose2d getTagPoseImplementation(int tagID) {
+        return new Pose2d();
+    }
+
 }

@@ -108,8 +108,6 @@ public class RobotContainer {
       // Robot.robotMode.setCurrentMode(RobotMode.initialTransitPose);
       // Robot.robotMode.setDriveModeCommand(RobotMode.controllerDrive);
 
-      Robot.limelight.initialPoseEstimates();
-
     // Configure the button bindings
     configureButtonBindings();
   }
