@@ -1,5 +1,6 @@
 package frc.robot.utils;
 
+import frc.robot.DashboardButtonBox;
 import frc.robot.Robot;
 
 public class Utils {
@@ -31,7 +32,7 @@ public class Utils {
     }
     
     public static ReefPosition getSelectedReefPosition() {
-        if (Robot.buttonBoxController.getRawButton(0)) {
+        if (DashboardButtonBox.getRawButton(0)){
             return ReefPosition.A;
         } else {
             return null;

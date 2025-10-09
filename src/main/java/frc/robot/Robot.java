@@ -20,6 +20,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -49,12 +50,16 @@ import frc.robot.subsystems.manipulator.Manipulator;
 import frc.robot.subsystems.manipulator.ManipulatorIO;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.robotControl.RobotControl;
+import frc.robot.utils.GenericNTButton;
+import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
+import java.io.IOException;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -75,13 +80,18 @@ public class Robot extends LoggedRobot {
 
   public static RobotControl robotControl;
 
-  public static Limelight limelight;
+  public static Camera camera;
 
-  public final static GenericHID buttonBoxController = new GenericHID(1);
+//  public final static GenericHID buttonBoxController = new GenericHID(1);
   public final static CommandXboxController joystick = new CommandXboxController(0);
-  public final static DashboardButtonBox buttonBox = new DashboardButtonBox();
+  public final static DashboardButtonBox buttonBox = new DashboardButtonBox(1, "buttonBox");
 
   public final static RobotLights lights = new RobotLights();
+
+//  public GenericNTButton testButton = new GenericNTButton("test", NetworkTableInstance.getDefault().getTable("test"), "1", () -> false, false);
+//  public GenericNTButton testButton2 = new GenericNTButton("test2", NetworkTableInstance.getDefault().getTable("test"), "1", () -> false, false);
+
+//  public final DashboardController dashboardController = new DashboardController(1, "test");
 
   public Robot() {
     // Record metadata
@@ -162,7 +172,7 @@ public class Robot extends LoggedRobot {
               manipulator = new Manipulator(new ManipulatorIOHardware());
               arm = new Arm(new ArmIOHardware());
               climber = new Climber(new ClimberIOHardware());
-              limelight = new Limelight(new LimelightIOHardware("limelight-front", new Pose3d(Units.inchesToMeters(-0.548596), Units.inchesToMeters(9.66), Units.inchesToMeters(28.228805), new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-23), Units.degreesToRadians(10)))));
+              camera = new Camera(new CameraIOHardware("limelight-front", new Pose3d(Units.inchesToMeters(-0.548596), Units.inchesToMeters(9.66), Units.inchesToMeters(28.228805), new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-23), Units.degreesToRadians(10)))));
               break;
 
           case SIM:
@@ -179,7 +189,7 @@ public class Robot extends LoggedRobot {
               manipulator = new Manipulator(new ManipulatorIO() {});
               arm = new Arm(new ArmIOSim());
               climber = new Climber(new ClimberIO() {});
-              limelight = new Limelight(new LimelightIO() {});
+              camera = new Camera(new CameraIO() {});
               break;
 
           default:
@@ -196,7 +206,7 @@ public class Robot extends LoggedRobot {
               manipulator = new Manipulator(new ManipulatorIO() {});
               arm = new Arm(new ArmIO() {});
               climber = new Climber(new ClimberIO() {});
-              limelight = new Limelight(new LimelightIO() {});
+              camera = new Camera(new CameraIO() {});
               break;
       }
       robotControl = new RobotControl();
@@ -208,6 +218,18 @@ public class Robot extends LoggedRobot {
       if (Constants.currentMode == Constants.Mode.SIM) {
           RobotControl.setCurrentMode(RobotControl.initialTransitPose);
       }
+
+//      dashboardController.addButton("test", "test", 0);
+//      dashboardController.addButton("test2", "test", 1);
+
+//      try {
+//          dashboardController.buildFromJSON();
+//      } catch (IOException e) {
+//          throw new RuntimeException(e);
+//      } catch (ParseException e) {
+//          throw new RuntimeException(e);
+//      }
+
   }
 
   /** This function is called periodically during all modes. */
@@ -227,6 +249,7 @@ public class Robot extends LoggedRobot {
     // Return to non-RT thread priority (do not modify the first argument)
     // Threads.setCurrentThreadPriority(false, 10);
       buttonBox.buttonBoxPeriodic();
+//      System.out.println(testButton.get());
   }
 
   /** This function is called once when the robot is disabled. */

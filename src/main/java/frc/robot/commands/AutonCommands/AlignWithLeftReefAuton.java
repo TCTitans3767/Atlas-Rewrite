@@ -16,15 +16,14 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.ReefTagIDs;
 import frc.robot.subsystems.drive.Drivetrain;
-import frc.robot.subsystems.limelight.Limelight;
-import frc.robot.subsystems.limelight.Limelight;
+import frc.robot.subsystems.limelight.Camera;
 import frc.robot.utils.DrivetrainPublisher;
 import frc.robot.utils.Utils.ReefPosition;
 import org.littletonrobotics.junction.Logger;
 
 public class AlignWithLeftReefAuton extends Command{
     
-    private final Limelight camera = Robot.limelight;
+    private final Camera camera = Robot.camera;
     private final Drivetrain drivetrain = Robot.drivetrain;
 
     private final RobotCentric driveWithTag = new RobotCentric();
@@ -55,37 +54,37 @@ public class AlignWithLeftReefAuton extends Command{
 
         switch (targetReef) {
             case A:
-                targetReefPose = Robot.getAlliance() == Alliance.Blue ? Limelight.getTagPose(ReefTagIDs.blueReefAB) : Limelight.getTagPose(ReefTagIDs.redReefAB);
+                targetReefPose = Robot.getAlliance() == Alliance.Blue ? Camera.getTagPose(ReefTagIDs.blueReefAB) : Camera.getTagPose(ReefTagIDs.redReefAB);
                 targetReefRotation = Robot.getAlliance() == Alliance.Blue ? new Rotation2d(Units.degreesToRadians(0)) : new Rotation2d(Units.degreesToRadians(180));
                 targetReefTag = Robot.getAlliance() == Alliance.Blue ? ReefTagIDs.blueReefAB : ReefTagIDs.redReefAB;
                 break;
         
             case C:
-                targetReefPose = Robot.getAlliance() == Alliance.Blue ? Limelight.getTagPose(ReefTagIDs.blueReefCD) : Limelight.getTagPose(ReefTagIDs.redReefCD);
+                targetReefPose = Robot.getAlliance() == Alliance.Blue ? Camera.getTagPose(ReefTagIDs.blueReefCD) : Camera.getTagPose(ReefTagIDs.redReefCD);
                 targetReefRotation = Robot.getAlliance() == Alliance.Blue ? new Rotation2d(Units.degreesToRadians(60)) : new Rotation2d(Units.degreesToRadians(-120));
                 targetReefTag = Robot.getAlliance() == Alliance.Blue ? ReefTagIDs.blueReefCD : ReefTagIDs.redReefCD;
                 break;
 
             case E:
-                targetReefPose = Robot.getAlliance() == Alliance.Blue ? Limelight.getTagPose(ReefTagIDs.blueReefEF) : Limelight.getTagPose(ReefTagIDs.redReefEF);
+                targetReefPose = Robot.getAlliance() == Alliance.Blue ? Camera.getTagPose(ReefTagIDs.blueReefEF) : Camera.getTagPose(ReefTagIDs.redReefEF);
                 targetReefRotation = Robot.getAlliance() == Alliance.Blue ? new Rotation2d(Units.degreesToRadians(120)) : new Rotation2d(Units.degreesToRadians(-60));
                 targetReefTag = Robot.getAlliance() == Alliance.Blue ? ReefTagIDs.blueReefEF : ReefTagIDs.redReefEF;
                 break;
 
             case G:
-                targetReefPose = Robot.getAlliance() == Alliance.Blue ? Limelight.getTagPose(ReefTagIDs.blueReefGH) : Limelight.getTagPose(ReefTagIDs.redReefGH);
+                targetReefPose = Robot.getAlliance() == Alliance.Blue ? Camera.getTagPose(ReefTagIDs.blueReefGH) : Camera.getTagPose(ReefTagIDs.redReefGH);
                 targetReefRotation = Robot.getAlliance() == Alliance.Blue ? new Rotation2d(Units.degreesToRadians(180)) : new Rotation2d(Units.degreesToRadians(0));
                 targetReefTag = Robot.getAlliance() == Alliance.Blue ? ReefTagIDs.blueReefGH : ReefTagIDs.redReefGH;
                 break;
 
             case I:
-                targetReefPose = Robot.getAlliance() == Alliance.Blue ? Limelight.getTagPose(ReefTagIDs.blueReefIJ) : Limelight.getTagPose(ReefTagIDs.redReefIJ);
+                targetReefPose = Robot.getAlliance() == Alliance.Blue ? Camera.getTagPose(ReefTagIDs.blueReefIJ) : Camera.getTagPose(ReefTagIDs.redReefIJ);
                 targetReefRotation = Robot.getAlliance() == Alliance.Blue ? new Rotation2d(Units.degreesToRadians(-120)) : new Rotation2d(Units.degreesToRadians(60));
                 targetReefTag = Robot.getAlliance() == Alliance.Blue ? ReefTagIDs.blueReefIJ : ReefTagIDs.redReefIJ;
                 break;
 
             case K:
-                targetReefPose = Robot.getAlliance() == Alliance.Blue ? Limelight.getTagPose(ReefTagIDs.blueReefKL) : Limelight.getTagPose(ReefTagIDs.redReefKL);
+                targetReefPose = Robot.getAlliance() == Alliance.Blue ? Camera.getTagPose(ReefTagIDs.blueReefKL) : Camera.getTagPose(ReefTagIDs.redReefKL);
                 targetReefRotation = Robot.getAlliance() == Alliance.Blue ? new Rotation2d(Units.degreesToRadians(-60)) : new Rotation2d(Units.degreesToRadians(120));
                 targetReefTag = Robot.getAlliance() == Alliance.Blue ? ReefTagIDs.blueReefKL : ReefTagIDs.redReefKL;
                 break;

@@ -1,27 +1,23 @@
 package frc.robot.subsystems.limelight;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
-import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.drive.Drivetrain;
 import frc.robot.utils.LimelightHelpers;
-import org.littletonrobotics.junction.Logger;
+import limelight.Limelight;
+import limelight.networktables.*;
+import limelight.results.RawFiducial;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
-public class LimelightIOHardware implements LimelightIO{
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+
+public class CameraIOHardware implements CameraIO {
 
     private final Drivetrain drivetrain = Robot.drivetrain;
 
@@ -33,112 +29,111 @@ public class LimelightIOHardware implements LimelightIO{
     private double runningTimer = 0;
     static boolean initialEstimationsComplete = false;
     static boolean doEstimationAll = true;
-    private int[] tagFilter = new int[0];
+    private Double[] tagFilter = new Double[0];
     private boolean hasTarget = false;
     private LimelightHelpers.PoseEstimate estimatedPose;
 
+    private final Limelight limelight;
+    private final LimelightPoseEstimator limelightMegaTag2Estimator;
+    private final LimelightPoseEstimator limelightMegaTag1Estimator;
 
-    public LimelightIOHardware(String limelightName, Pose3d robotToLimelight) {
+    public CameraIOHardware(String limelightName, Pose3d robotToLimelight) {
+        limelight = new Limelight(limelightName);
+        limelight.getSettings().withCameraOffset(robotToLimelight).save();
+
+        limelightMegaTag2Estimator = limelight.getPoseEstimator(true);
+        limelightMegaTag1Estimator = limelight.getPoseEstimator(false);
         this.limelightName = limelightName;
         this.robotToLimelight = robotToLimelight;
     }
 
     @Override
     public void updateInputs(LimelightIOInputs inputs) {
-        if (LimelightHelpers.getCameraPose3d_RobotSpace(limelightName) != robotToLimelight) {
-            LimelightHelpers.setCameraPose_RobotSpace(limelightName, robotToLimelight.getX(), robotToLimelight.getY(), robotToLimelight.getZ(), Units.radiansToDegrees(robotToLimelight.getRotation().getX()), Units.radiansToDegrees(robotToLimelight.getRotation().getY()), Units.radiansToDegrees(robotToLimelight.getRotation().getZ()));
-            inputs.robotToLimelight = robotToLimelight;
-            inputs.limelightName = limelightName;
-            return;
-        }
-        hasTarget = LimelightHelpers.getTV(limelightName);
-        if (runningTimer < 15) {
-            if (hasTarget) {
-                estimatedPose = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
-                if (LimelightHelpers.validPoseEstimate(estimatedPose)) {
-                    drivetrain.addVisionMeasurement(estimatedPose.pose, Timer.getFPGATimestamp(), VecBuilder.fill(0.1, 0.1, 0.2));
+        if (runningTimer < 15 && doEstimationAll && doEstimation) {
+            limelight.getSettings().withImuMode(LimelightSettings.ImuMode.SyncInternalImu).save();
+            Optional<PoseEstimate> visionEstimate = limelightMegaTag1Estimator.getPoseEstimate();
+            visionEstimate.ifPresent(poseEstimate -> {
+                inputs.hasTarget = true;
+                if ((Math.abs(drivetrain.getPigeon2().getAngularVelocityZDevice().getValueAsDouble()) < 720) && (poseEstimate.tagCount > 0) && (poseEstimate.avgTagDist < 3.5) && (poseEstimate.getAvgTagAmbiguity() < 0.1)) {
+                    drivetrain.addVisionMeasurement(poseEstimate.pose.toPose2d(), poseEstimate.timestampSeconds, VecBuilder.fill(0.1, 0.1, 0.2));
                     runningTimer++;
+
+                    inputs.estimatedRobotPose = poseEstimate.pose.toPose2d();
+                    ArrayList<Pose2d> tagPoses = new ArrayList<>();
+                    for (RawFiducial fiducial : poseEstimate.rawFiducials) {
+                        tagPoses.add(getTagPoseImplementation(fiducial.id));
+                    }
+                    tagPoses.toArray(inputs.targetPoses);
                 }
-                return;
-            } else {
-                return;
-            }
-        } else if (runningTimer >= 15) {
-            LimelightHelpers.SetIMUMode(limelightName, 1);
-            LimelightHelpers.SetRobotOrientation(limelightName,
-                    drivetrain.getPose().getRotation().getDegrees(),
-                    0,
-                    0,
-                    0,
-                    0,
-                    0
-            );
+            });
+        } else if (runningTimer >= 15 && doEstimationAll && doEstimation) {
+            limelight.getSettings().withImuMode(LimelightSettings.ImuMode.SyncInternalImu).save();
+            limelight.getSettings().withRobotOrientation(new Orientation3d(
+                    drivetrain.getPigeon2().getRotation3d(),
+                    new AngularVelocity3d(DegreesPerSecond.of(0), DegreesPerSecond.of(0), DegreesPerSecond.of(0))
+            )).save();
+            limelightMegaTag2Estimator.getPoseEstimate().ifPresent(poseEstimate -> {
+                inputs.hasTarget = true;
+                if ((Math.abs(drivetrain.getPigeon2().getAngularVelocityZDevice().getValueAsDouble()) < 720) && (poseEstimate.tagCount > 0) && (poseEstimate.avgTagDist < 5) && (poseEstimate.getAvgTagAmbiguity() < 0.1)) {
+                    inputs.validEstimationFrame = true;
+                    drivetrain.addVisionMeasurement(poseEstimate.pose.toPose2d());
+
+                    inputs.estimatedRobotPose = poseEstimate.pose.toPose2d();
+                    ArrayList<Pose2d> tagPoses = new ArrayList<>();
+                    for (RawFiducial fiducial : poseEstimate.rawFiducials) {
+                        tagPoses.add(getTagPoseImplementation(fiducial.id));
+                    }
+                    tagPoses.toArray(inputs.targetPoses);
+                }
+            });
+            limelight.getSettings().withImuMode(LimelightSettings.ImuMode.InternalImu).save();
             initialEstimationsComplete = true;
             inputs.limelightGyroInitialized = true;
         }
-        if (!inputs.limelightGyroInitialized && initialEstimationsComplete && LimelightHelpers.getTV(limelightName)) {
-            LimelightHelpers.SetIMUMode(limelightName, 1);
-            LimelightHelpers.SetRobotOrientation(limelightName,
-                    drivetrain.getPose().getRotation().getDegrees(),
-                    0,
-                    0,
-                    0,
-                    0,
-                    0
-            );
-            estimatedPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
-            LimelightHelpers.SetIMUMode(limelightName, 2);
-            inputs.limelightGyroInitialized = true;
-        } else if (inputs.limelightGyroInitialized && initialEstimationsComplete && LimelightHelpers.getTV(limelightName)) {
-             estimatedPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
-        }
+        if (inputs.limelightGyroInitialized && initialEstimationsComplete && doEstimationAll && doEstimation){
+            limelightMegaTag2Estimator.getPoseEstimate().ifPresent(poseEstimate -> {
+                inputs.hasTarget = true;
+                if ((Math.abs(drivetrain.getPigeon2().getAngularVelocityZDevice().getValueAsDouble()) < 720) && (poseEstimate.tagCount > 0) && (poseEstimate.avgTagDist < 5) && (poseEstimate.getAvgTagAmbiguity() < 0.1)) {
+                    inputs.validEstimationFrame = true;
+                    drivetrain.addVisionMeasurement(poseEstimate.pose.toPose2d());
 
-        if (Math.abs(drivetrain.getPigeon2().getAngularVelocityZDevice().getValueAsDouble()) > 720) {
-            goodEstimationFrame = false;
+                    inputs.estimatedRobotPose = poseEstimate.pose.toPose2d();
+                    ArrayList<Pose2d> tagPoses = new ArrayList<>();
+                    for (RawFiducial fiducial : poseEstimate.rawFiducials) {
+                        tagPoses.add(getTagPoseImplementation(fiducial.id));
+                    }
+                    tagPoses.toArray(inputs.targetPoses);
+                }
+            });
+        } else {
+            inputs.hasTarget = false;
+            inputs.validEstimationFrame = false;
+            inputs.targetPoses = new Pose2d[0];
         }
-        if (estimatedPose.tagCount == 0) {
-            goodEstimationFrame = false;
-        }
-
-        if (goodEstimationFrame && doEstimation && doEstimationAll) {
-            drivetrain.addVisionMeasurement(estimatedPose.pose);
-        }
-
-        inputs.hasTarget = hasTarget;
-        inputs.estimatedRobotPose = estimatedPose.pose;
-        inputs.tagFilter = tagFilter;
-        inputs.targetPose = LimelightHelpers.toPose2D(LimelightHelpers.getTargetPose_RobotSpace(limelightName));
-
     }
 
     @Override
     public void resetIMU() {
         doEstimation = false;
 
-        LimelightHelpers.SetIMUMode(limelightName, 1);
-        LimelightHelpers.SetRobotOrientation(limelightName,
-                Robot.drivetrain.getPose().getRotation().getDegrees(),
-                0,
-                0,
-                0,
-                0,
-                0
-        );
-        LimelightHelpers.SetIMUMode(limelightName, 2);
+        limelight.getSettings().withImuMode(LimelightSettings.ImuMode.SyncInternalImu).save();
+        limelight.getSettings().withRobotOrientation(new Orientation3d(
+                drivetrain.getPigeon2().getRotation3d(),
+                new AngularVelocity3d(DegreesPerSecond.of(0), DegreesPerSecond.of(0), DegreesPerSecond.of(0))
+        )).save();
 
         doEstimation = true;
     }
 
-    @Override
-    public void setTagFilter(int[] ids) {
+    public void setTagFilter(Double[] ids) {
         tagFilter = ids;
-        LimelightHelpers.SetFiducialIDFiltersOverride(limelightName, ids);
+        limelight.getSettings().withArilTagIdFilter(Arrays.asList(ids)).save();
     }
 
     @Override
     public void resetTagFilter() {
-        tagFilter = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22};
-        LimelightHelpers.SetFiducialIDFiltersOverride(limelightName, new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22});
+        tagFilter = new Double[]{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0};
+        limelight.getSettings().withArilTagIdFilter(List.of(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0)).save();
     }
 
     @Override

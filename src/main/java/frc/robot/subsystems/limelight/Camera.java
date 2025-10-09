@@ -9,21 +9,20 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.drive.Drivetrain;
-import frc.robot.utils.LimelightHelpers;
 import org.littletonrobotics.junction.Logger;
 
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-public class Limelight extends SubsystemBase {
+public class Camera extends SubsystemBase {
 
-    private final LimelightIO io;
+    private final CameraIO io;
     private final LimelightIOInputsAutoLogged inputs = new LimelightIOInputsAutoLogged();
 
     private static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
-    public Limelight(LimelightIO io) {
+    public Camera(CameraIO io) {
         this.io = io;
     }
 
@@ -103,14 +102,14 @@ public class Limelight extends SubsystemBase {
 
                 @Override
                 public int compare(Integer tag1, Integer tag2) {
-                    double distanceToTag1 = Limelight.getTagPose(tag1).getTranslation().getDistance(drivetrain.getPose().getTranslation());
-                    double distanceToTag2 = Limelight.getTagPose(tag2).getTranslation().getDistance(drivetrain.getPose().getTranslation());
+                    double distanceToTag1 = Camera.getTagPose(tag1).getTranslation().getDistance(drivetrain.getPose().getTranslation());
+                    double distanceToTag2 = Camera.getTagPose(tag2).getTranslation().getDistance(drivetrain.getPose().getTranslation());
 
                     return (int) Math.floor(distanceToTag1 - distanceToTag2);
                 }
             });
 
-            return Limelight.getTagAngle(nearestTags.get(0)).plus(Rotation2d.fromDegrees(180)).getDegrees();
+            return Camera.getTagAngle(nearestTags.get(0)).plus(Rotation2d.fromDegrees(180)).getDegrees();
 
         } else {
             List<Integer> nearestTags = Arrays.asList(Constants.ReefTagIDs.red);
@@ -121,14 +120,14 @@ public class Limelight extends SubsystemBase {
 
                 @Override
                 public int compare(Integer tag1, Integer tag2) {
-                    double distanceToTag1 = Limelight.getTagPose(tag1).getTranslation().getDistance(drivetrain.getPose().getTranslation());
-                    double distanceToTag2 = Limelight.getTagPose(tag2).getTranslation().getDistance(drivetrain.getPose().getTranslation());
+                    double distanceToTag1 = Camera.getTagPose(tag1).getTranslation().getDistance(drivetrain.getPose().getTranslation());
+                    double distanceToTag2 = Camera.getTagPose(tag2).getTranslation().getDistance(drivetrain.getPose().getTranslation());
 
                     return (int) Math.floor(distanceToTag1 - distanceToTag2);
                 }
             });
 
-            return Limelight.getTagAngle(nearestTags.get(0)).plus(Rotation2d.fromDegrees(180)).getDegrees();
+            return Camera.getTagAngle(nearestTags.get(0)).plus(Rotation2d.fromDegrees(180)).getDegrees();
         }
     }
 
@@ -142,8 +141,8 @@ public class Limelight extends SubsystemBase {
 
                 @Override
                 public int compare(Integer tag1, Integer tag2) {
-                    double distanceToTag1 = Limelight.getTagPose(tag1).getTranslation().getDistance(drivetrain.getPose().getTranslation());
-                    double distanceToTag2 = Limelight.getTagPose(tag2).getTranslation().getDistance(drivetrain.getPose().getTranslation());
+                    double distanceToTag1 = Camera.getTagPose(tag1).getTranslation().getDistance(drivetrain.getPose().getTranslation());
+                    double distanceToTag2 = Camera.getTagPose(tag2).getTranslation().getDistance(drivetrain.getPose().getTranslation());
 
                     return (int) Math.floor(distanceToTag1 - distanceToTag2);
                 }
@@ -160,8 +159,8 @@ public class Limelight extends SubsystemBase {
 
                 @Override
                 public int compare(Integer tag1, Integer tag2) {
-                    double distanceToTag1 = Limelight.getTagPose(tag1).getTranslation().getDistance(drivetrain.getPose().getTranslation());
-                    double distanceToTag2 = Limelight.getTagPose(tag2).getTranslation().getDistance(drivetrain.getPose().getTranslation());
+                    double distanceToTag1 = Camera.getTagPose(tag1).getTranslation().getDistance(drivetrain.getPose().getTranslation());
+                    double distanceToTag2 = Camera.getTagPose(tag2).getTranslation().getDistance(drivetrain.getPose().getTranslation());
 
                     return (int) Math.floor(distanceToTag1 - distanceToTag2);
                 }

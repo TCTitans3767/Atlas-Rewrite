@@ -1,0 +1,116 @@
+[
+  {
+    "name": "A",
+    "group": "Reef Branch",
+    "buttonID": 1,
+    "defaultValue": true
+  },
+  {
+    "name": "B",
+    "group": "Reef Branch",
+    "buttonID": 2,
+    "defaultValue": false
+  },
+  {
+    "name": "C",
+    "group": "Reef Branch",
+    "buttonID": 3,
+    "defaultValue": false
+  },
+  {
+    "name": "D",
+    "group": "Reef Branch",
+    "buttonID": 4,
+    "defaultValue": false
+  },
+  {
+    "name": "E",
+    "group": "Reef Branch",
+    "buttonID": 5,
+    "defaultValue": false
+  },
+  {
+    "name": "F",
+    "group": "Reef Branch",
+    "buttonID": 6,
+    "defaultValue": false
+  },
+  {
+    "name": "G",
+    "group": "Reef Branch",
+    "buttonID": 7,
+    "defaultValue": false
+  },
+  {
+    "name": "H",
+    "group": "Reef Branch",
+    "buttonID": 8,
+    "defaultValue": false
+  },
+  {
+    "name": "I",
+    "group": "Reef Branch",
+    "buttonID": 9,
+    "defaultValue": false
+  },
+  {
+    "name": "J",
+    "group": "Reef Branch",
+    "buttonID": 10,
+    "defaultValue": false
+  },
+  {
+    "name": "K",
+    "group": "Reef Branch",
+    "buttonID": 11,
+    "defaultValue": false
+  },
+  {
+    "name": "L",
+    "group": "Reef Branch",
+    "buttonID": 12,
+    "defaultValue": false
+  },
+  {
+    "name": "L1",
+    "group": "Reef Level",
+    "buttonID": 13,
+    "defaultValue": false
+  },
+  {
+    "name": "L2",
+    "group": "Reef Level",
+    "buttonID": 14,
+    "defaultValue": false
+  },
+  {
+    "name": "L3",
+    "group": "Reef Level",
+    "buttonID": 15,
+    "defaultValue": false
+  },
+  {
+    "name": "L4",
+    "group": "Reef Level",
+    "buttonID": 16,
+    "defaultValue": false
+  },
+  {
+    "name": "Algae Knockoff",
+    "group": null,
+    "buttonID": 17,
+    "defaultValue": false
+  },
+  {
+    "name": "Station Select",
+    "group": null,
+    "buttonID": 18,
+    "defaultValue": false
+  },
+  {
+    "name": "Climb",
+    "group": null,
+    "buttonID": 19,
+    "defaultValue": false
+  }
+]

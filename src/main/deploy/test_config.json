@@ -1,0 +1,14 @@
+[
+  {
+    "name": "test",
+    "group": "1",
+    "buttonID": 0,
+    "defaultValue": true
+  },
+  {
+    "name": "test2",
+    "group": "1",
+    "buttonID": 1,
+    "defaultValue": false
+  }
+]

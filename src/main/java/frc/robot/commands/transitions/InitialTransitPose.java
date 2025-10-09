@@ -21,7 +21,7 @@ public class InitialTransitPose extends SequentialCommandGroup{
             new InstantCommand(() -> System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa")),
             new SetArmAngle(-0.122),
             new InstantCommand(() -> {
-                RobotControl.setDriveModeCommand(RobotControl.controllerDrive); Robot.manipulator.setSpeed(0); Robot.limelight.turnOnAprilTags();}),
+                RobotControl.setDriveModeCommand(RobotControl.controllerDrive); Robot.manipulator.setSpeed(0); Robot.camera.turnOnAprilTags();}),
             new InstantCommand(() -> {RobotControl.setCurrentMode(RobotControl.transit);}).ignoringDisable(true)
         );
 

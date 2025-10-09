@@ -20,7 +20,6 @@ import com.pathplanner.lib.util.FileVersionException;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -29,13 +28,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.SetModeCommand;
 import frc.robot.commands.driveCommands.DriveCommandsFunctions;
-import frc.robot.subsystems.drive.Drivetrain;
 import frc.robot.subsystems.robotControl.RobotControl;
-import frc.robot.utils.DrivetrainPublisher;
 import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
-import javax.swing.text.html.HTMLDocument;
 import java.io.IOException;
 import java.util.Map;
 
@@ -173,7 +169,7 @@ public class RobotContainer {
       Robot.joystick.start().onTrue(new InstantCommand(() -> RobotControl.setCurrentMode(RobotControl.resetPose)));
       Robot.joystick.back().onTrue(Robot.drivetrain.runOnce(() -> {
           Robot.drivetrain.setPose(new Pose2d());
-          Robot.limelight.resetIMU();
+          Robot.camera.resetIMU();
       }));
   }
 

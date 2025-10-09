@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.utils.Utils;
 
 public final class Constants {
     public static final Mode simMode = Mode.SIM;
@@ -40,32 +41,32 @@ public final class Constants {
         public static final ReefLevel initialReefLevel = ReefLevel.L4;
     }
 
-    public final class ButtonBoxButtons {
+    public static final class ButtonBoxButtons {
         public final static double debounceSeconds = 0.2;
 
-        public final static Map<ReefBranch, Integer> branchButtonMap;
-        public final static Map<ReefLevel, Integer> levelButtonMap;
+        public final static Map<Integer, Utils.ReefPosition> branchButtonMap;
+        public final static Map<Integer, ReefLevel> levelButtonMap;
 
         static {
-            branchButtonMap = new HashMap<ReefBranch, Integer>();
-            branchButtonMap.put(ReefBranch.A, 1);
-            branchButtonMap.put(ReefBranch.B, 2);
-            branchButtonMap.put(ReefBranch.C, 3);
-            branchButtonMap.put(ReefBranch.D, 4);
-            branchButtonMap.put(ReefBranch.E, 5);
-            branchButtonMap.put(ReefBranch.F, 6);
-            branchButtonMap.put(ReefBranch.G, 7);
-            branchButtonMap.put(ReefBranch.H, 8);
-            branchButtonMap.put(ReefBranch.I, 9);
-            branchButtonMap.put(ReefBranch.J, 10);
-            branchButtonMap.put(ReefBranch.K, 11);
-            branchButtonMap.put(ReefBranch.L, 12);
+            branchButtonMap = new HashMap<Integer, Utils.ReefPosition>();
+            branchButtonMap.put(1, Utils.ReefPosition.A);
+            branchButtonMap.put(2, Utils.ReefPosition.B);
+            branchButtonMap.put(3, Utils.ReefPosition.C);
+            branchButtonMap.put(4, Utils.ReefPosition.D);
+            branchButtonMap.put(5, Utils.ReefPosition.E);
+            branchButtonMap.put(6, Utils.ReefPosition.F);
+            branchButtonMap.put(7, Utils.ReefPosition.G);
+            branchButtonMap.put(8, Utils.ReefPosition.H);
+            branchButtonMap.put(9, Utils.ReefPosition.I);
+            branchButtonMap.put(10, Utils.ReefPosition.J);
+            branchButtonMap.put(11, Utils.ReefPosition.K);
+            branchButtonMap.put(12, Utils.ReefPosition.L);
 
-            levelButtonMap = new HashMap<ReefLevel, Integer>();
-            levelButtonMap.put(ReefLevel.L1, 13);
-            levelButtonMap.put(ReefLevel.L2, 14);
-            levelButtonMap.put(ReefLevel.L3, 15);
-            levelButtonMap.put(ReefLevel.L4, 16);
+            levelButtonMap = new HashMap<Integer, ReefLevel>();
+            levelButtonMap.put(13, ReefLevel.L1);
+            levelButtonMap.put(14, ReefLevel.L2);
+            levelButtonMap.put(15, ReefLevel.L3);
+            levelButtonMap.put(16, ReefLevel.L4);
         }
 
         public final static int algaeEject = 17;
