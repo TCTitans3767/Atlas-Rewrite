@@ -4,7 +4,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.TriggerBoard;
 import frc.robot.subsystems.robotControl.RobotControl;
+import frc.robot.utils.RobotTransitions;
+import frc.robot.utils.State;
 
+@State
 public class CoralReefAligned extends Command{
 
     public CoralReefAligned() {
@@ -14,12 +17,12 @@ public class CoralReefAligned extends Command{
     @Override
     public void execute() {
         if (TriggerBoard.isCoralButtonPressed()) {
-            RobotControl.setCurrentMode(RobotControl.coralReefPose);
+            RobotControl.setCurrentMode(RobotTransitions.coralReefPose);
             return;
         }
 
         if (TriggerBoard.isCoralOverrideButtonPressed()) {
-            RobotControl.setCurrentMode(RobotControl.transitPose);
+            RobotControl.setCurrentMode(RobotTransitions.transitPose);
             return;
         }
     }

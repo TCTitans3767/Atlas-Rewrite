@@ -13,7 +13,10 @@ import frc.robot.commands.arm.SetArmAngle;
 import frc.robot.commands.elevator.SetElevatorPosition;
 import frc.robot.subsystems.robotControl.RobotControl;
 import frc.robot.utils.DrivetrainPublisher;
+import frc.robot.utils.RobotTransitions;
+import frc.robot.utils.Transition;
 
+@Transition
 public class KnockOffAlgaePoseManual extends SequentialCommandGroup{
     
     public KnockOffAlgaePoseManual() {
@@ -37,7 +40,7 @@ public class KnockOffAlgaePoseManual extends SequentialCommandGroup{
             }),
             new WaitCommand(0.6),
             new InstantCommand(() -> {DrivetrainPublisher.setXVelocitySupplier(() -> 0, true); RobotControl.setDriveModeCommand(RobotControl.controllerDrive);}),
-            new InstantCommand(() -> {RobotControl.setCurrentMode(RobotControl.coralFloorPose); Robot.manipulator.setSpeed(0);})
+            new InstantCommand(() -> {RobotControl.setCurrentMode(RobotTransitions.coralFloorPose); Robot.manipulator.setSpeed(0);})
         );
 
         addRequirements(Robot.arm, Robot.climber, Robot.intake, Robot.manipulator, Robot.elevator);

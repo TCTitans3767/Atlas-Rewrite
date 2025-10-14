@@ -8,7 +8,10 @@ import frc.robot.commands.Intake.SetIntakeWheelSpeed;
 import frc.robot.commands.arm.SetArmAngle;
 import frc.robot.commands.elevator.SetElevatorPosition;
 import frc.robot.subsystems.robotControl.RobotControl;
+import frc.robot.utils.RobotStates;
+import frc.robot.utils.Transition;
 
+@Transition
 public class InitialTransitPose extends SequentialCommandGroup{
     
     public InitialTransitPose() {
@@ -22,7 +25,7 @@ public class InitialTransitPose extends SequentialCommandGroup{
             new SetArmAngle(-0.122),
             new InstantCommand(() -> {
                 RobotControl.setDriveModeCommand(RobotControl.controllerDrive); Robot.manipulator.setSpeed(0); Robot.camera.turnOnAprilTags();}),
-            new InstantCommand(() -> {RobotControl.setCurrentMode(RobotControl.transit);}).ignoringDisable(true)
+            new InstantCommand(() -> {RobotControl.setCurrentMode(RobotStates.transit);}).ignoringDisable(true)
         );
 
         addRequirements(Robot.arm, Robot.climber, Robot.intake, Robot.manipulator, Robot.elevator);

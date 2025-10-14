@@ -22,76 +22,16 @@ public class RobotControl extends SubsystemBase implements RobotControlIO{
     public static AlignWithLeftReef alignWithLeftReef;
     public static AlignWithRightReef alignWithRightReef;
     public static ControllerDrive controllerDrive;
-
-    public static CoralStation coralStation;
-    public static TransitPose transitPose;
-    public static Transit transit;
-    public static CoralStationPose coralStationPose;
-    public static CoralFloorPose coralFloorPose;
-    public static CoralFloor coralFloor;
-    public static CoralReefPose coralReefPose;
-    public static CoralReef coralReef;
-    public static CoralReefAlignPose coralReefAlignPose;
-    public static CoralReefAligned coralReefAligned;
-    public static ScoreCoralPose scoreCoralPose;
-    public static AlgaePickupPose algaePickupPose;
-    public static AlgaePickup algaePickup;
-    public static InitialTransitPose initialTransitPose;
-    public static CoralRecievedPose coralRecievedPose;
-    public static AlignWithAlgae alignWithAlgae;
-    public static Climb climb;
-    public static FinalClimb finalClimb;
-    public static DeployClimberPose deployClimberPose;
-    public static ClimbPose climbPose;
-    public static EjectAlgaePose ejectAlgaePose;
-
-    public static KnockOffAlgaePose knockOffAlgaePose;
-    public static KnockOffAlgaePoseManual knockOffAlgaePoseManual;
-
     public static SlowControllerDrive slowControllerDrive;
-
-    public static L1Pose L1Pose;
-    public static L1 L1;
-
-    public static ResetPose resetPose;
+    public static AlignWithAlgae alignWithAlgae;
 
     public RobotControl() {
 
         alignWithLeftReef = new AlignWithLeftReef();
         alignWithRightReef = new AlignWithRightReef();
         controllerDrive = new ControllerDrive();
-
-        coralStation = new CoralStation();
-        transitPose = new TransitPose();
-        transit = new Transit();
-        coralStationPose = new CoralStationPose();
-        coralFloorPose = new CoralFloorPose();
-        coralFloor = new CoralFloor();
-        coralReefPose = new CoralReefPose();
-        coralReef = new CoralReef();
-        coralReefAlignPose = new CoralReefAlignPose();
-        coralReefAligned = new CoralReefAligned();
-        scoreCoralPose = new ScoreCoralPose();
-        algaePickupPose = new AlgaePickupPose();
-        algaePickup = new AlgaePickup();
-        initialTransitPose = new InitialTransitPose();
-        coralRecievedPose = new CoralRecievedPose();
-        alignWithAlgae = new AlignWithAlgae();
-        knockOffAlgaePose = new KnockOffAlgaePose();
-        climb = new Climb();
-        finalClimb = new FinalClimb();
-        deployClimberPose = new DeployClimberPose();
-        climbPose = new ClimbPose();
-        ejectAlgaePose = new EjectAlgaePose();
-
-        knockOffAlgaePoseManual = new KnockOffAlgaePoseManual();
-
         slowControllerDrive = new SlowControllerDrive();
-
-        L1Pose = new L1Pose();
-        L1 = new L1();
-
-        resetPose = new ResetPose();
+        alignWithAlgae = new AlignWithAlgae();
     }
 
     @Override

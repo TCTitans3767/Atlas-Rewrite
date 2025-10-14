@@ -3,7 +3,9 @@ package frc.robot.commands.modes;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.TriggerBoard;
+import frc.robot.utils.State;
 
+@State
 public class FinalClimb extends Command{
     
     public FinalClimb() {

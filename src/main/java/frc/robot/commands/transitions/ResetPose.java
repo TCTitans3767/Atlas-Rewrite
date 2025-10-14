@@ -10,7 +10,10 @@ import frc.robot.commands.arm.SetArmAngle;
 import frc.robot.commands.elevator.SetElevatorPosition;
 import frc.robot.commands.manipulator.SetManipulatorWheelSpeed;
 import frc.robot.subsystems.robotControl.RobotControl;
+import frc.robot.utils.RobotStates;
+import frc.robot.utils.Transition;
 
+@Transition
 public class ResetPose extends SequentialCommandGroup{
     
     public ResetPose() {
@@ -25,7 +28,7 @@ public class ResetPose extends SequentialCommandGroup{
             new SetElevatorPosition(0.5),
             new SetArmAngle(-0.122),
             new SetIntakePosition(Constants.Intake.pivotStowPosition).withTimeout(3),
-            new InstantCommand(() -> {Robot.intake.resetWheelSpeed(); RobotControl.setCurrentMode(RobotControl.transit);}).ignoringDisable(true)
+            new InstantCommand(() -> {Robot.intake.resetWheelSpeed(); RobotControl.setCurrentMode(RobotStates.transit);}).ignoringDisable(true)
         );
 
         addRequirements(Robot.arm, Robot.climber, Robot.intake, Robot.manipulator, Robot.elevator);

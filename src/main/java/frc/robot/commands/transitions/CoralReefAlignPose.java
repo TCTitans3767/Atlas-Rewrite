@@ -22,8 +22,11 @@ import frc.robot.commands.elevator.SetElevatorPosition;
 import frc.robot.commands.manipulator.SetManipulatorWheelSpeed;
 import frc.robot.subsystems.robotControl.RobotControl;
 import frc.robot.utils.DrivetrainPublisher;
+import frc.robot.utils.RobotTransitions;
+import frc.robot.utils.Transition;
 import frc.robot.utils.Utils.ReefPosition;
 
+@Transition
 public class CoralReefAlignPose extends SequentialCommandGroup{
 
         public class L1 extends SequentialCommandGroup{
@@ -106,7 +109,7 @@ public class CoralReefAlignPose extends SequentialCommandGroup{
             // new ConditionalCommand(new SetArmAngle(Constants.L4Measurements.armAngle), Commands.none(), TriggerBoard::isL4Selected),
             // new SelectCommand<String>(commandMap, DashboardButtonBox::getSelectedLevelString),
             new InstantCommand(() -> {RobotControl.setDriveModeCommand(RobotControl.slowControllerDrive);}),
-            new InstantCommand(() -> {RobotControl.setCurrentMode(RobotControl.scoreCoralPose);})
+            new InstantCommand(() -> {RobotControl.setCurrentMode(RobotTransitions.scoreCoralPose);})
         );
 
         addRequirements(Robot.arm, Robot.climber, Robot.intake, Robot.manipulator, Robot.elevator);

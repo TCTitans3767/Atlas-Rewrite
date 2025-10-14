@@ -22,6 +22,7 @@ import frc.robot.commands.elevator.SetElevatorPosition;
 import frc.robot.commands.manipulator.SetManipulatorWheelSpeed;
 import frc.robot.subsystems.robotControl.RobotControl;
 import frc.robot.utils.DrivetrainPublisher;
+import frc.robot.utils.RobotTransitions;
 import frc.robot.utils.Utils.ReefPosition;
 
 public class CoralReefAlignPoseAuton extends SequentialCommandGroup{
@@ -111,7 +112,7 @@ public class CoralReefAlignPoseAuton extends SequentialCommandGroup{
                         () -> true
                 );
             }),
-            new InstantCommand(() -> {RobotControl.setCurrentMode(RobotControl.scoreCoralPose);})
+            new InstantCommand(() -> {RobotControl.setCurrentMode(RobotTransitions.scoreCoralPose);})
         );
 
         addRequirements(Robot.arm, Robot.climber, Robot.intake, Robot.manipulator, Robot.elevator);
