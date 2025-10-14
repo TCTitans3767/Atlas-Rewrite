@@ -4,7 +4,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.TriggerBoard;
 import frc.robot.subsystems.robotControl.RobotControl;
+import frc.robot.utils.RobotTransitions;
+import frc.robot.utils.State;
 
+@State
 public class Climb extends Command{
     
     public Climb() {
@@ -15,11 +18,11 @@ public class Climb extends Command{
     public void execute() {
 
         if (!TriggerBoard.isClimbButtonBoxButtonPressed()) {
-            RobotControl.setCurrentMode(RobotControl.initialTransitPose);
+            RobotControl.setCurrentMode(RobotTransitions.initialTransitPose);
         }
 
         if (TriggerBoard.isClimbControllerButtonPressed()) {
-            RobotControl.setCurrentMode(RobotControl.deployClimberPose);
+            RobotControl.setCurrentMode(RobotTransitions.deployClimberPose);
         }
     }
 

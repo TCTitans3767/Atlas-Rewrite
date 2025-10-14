@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.SetModeCommand;
 import frc.robot.commands.driveCommands.DriveCommandsFunctions;
 import frc.robot.subsystems.robotControl.RobotControl;
+import frc.robot.utils.RobotTransitions;
 import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -111,10 +112,10 @@ public class RobotContainer {
 
     private void setUpPathplannerCommands() {
 
-        Command TransitPose = new SetModeCommand(RobotControl.transitPose);
+        Command TransitPose = new SetModeCommand(RobotTransitions.transitPose);
         Command WaitForCoral = new WaitUntilCommand(TriggerBoard::isCoralInManipulator);
         Command WaitForCoralFloorPose = Commands.print("waiting for coral floor pose").repeatedly()
-                .withDeadline(new WaitUntilCommand(() -> RobotControl.coralFloorPose.isScheduled()));
+                .withDeadline(new WaitUntilCommand(() -> RobotTransitions.coralFloorPose.isScheduled()));
         Command AlignWithA4 = new SetModeCommand(Autos.alignWithA4);
         Command AlignWithB4 = new SetModeCommand(Autos.alignWithB4);
         Command AlignWithA2 = new SetModeCommand(Autos.alignWithA2);
@@ -166,7 +167,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-      Robot.joystick.start().onTrue(new InstantCommand(() -> RobotControl.setCurrentMode(RobotControl.resetPose)));
+      Robot.joystick.start().onTrue(new InstantCommand(() -> RobotControl.setCurrentMode(RobotTransitions.resetPose)));
       Robot.joystick.back().onTrue(Robot.drivetrain.runOnce(() -> {
           Robot.drivetrain.setPose(new Pose2d());
           Robot.camera.resetIMU();

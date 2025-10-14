@@ -26,6 +26,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AutonCommands.CoralReefAlignPoseAuton;
 import frc.robot.commands.AutonCommands.CoralReefPoseAuton;
 import frc.robot.subsystems.robotControl.RobotControl;
+import frc.robot.subsystems.robotControl.RobotControlIOInputsAutoLogged;
+import frc.robot.utils.RobotStates;
+import frc.robot.utils.RobotTransitions;
 import frc.robot.utils.Utils.ReefPosition;
 
 public class Autos {
@@ -60,16 +63,16 @@ public class Autos {
             CoralReefAlignPoseAuton alignWithB2 = new CoralReefAlignPoseAuton(ReefPosition.B, "2", false);
 
             return new SequentialCommandGroup(
-                new InstantCommand(() -> {Robot.drivetrain.setPose(Robot.getAlliance() == Alliance.Blue ? leftWall_A.getStartingHolonomicPose().get() : flipped_LeftWall_AB.getStartingHolonomicPose().get()); RobotControl.setCurrentMode(RobotControl.transitPose);}),
+                new InstantCommand(() -> {Robot.drivetrain.setPose(Robot.getAlliance() == Alliance.Blue ? leftWall_A.getStartingHolonomicPose().get() : flipped_LeftWall_AB.getStartingHolonomicPose().get()); RobotControl.setCurrentMode(RobotTransitions.transitPose);}),
                 new InstantCommand(() -> {RobotControl.setDriveModeCommand(AutoBuilder.followPath(leftWall_A));}),
                 new WaitUntilCommand(RobotControl::isDriveCommandFinished).finallyDo(() -> RobotControl.setCurrentMode(alignWithA4)),
-                new WaitUntilCommand(() -> RobotControl.coralFloorPose.isScheduled()).finallyDo(() -> RobotControl.setDriveModeCommand(AutoBuilder.followPath(A_LeftLolipop))),
-                new WaitUntilCommand(() -> RobotControl.transitPose.isScheduled()).finallyDo(() -> {RobotControl.setDriveModeCommand(AutoBuilder.followPath(leftLolipop_B));}),
+                new WaitUntilCommand(() -> RobotTransitions.coralFloorPose.isScheduled()).finallyDo(() -> RobotControl.setDriveModeCommand(AutoBuilder.followPath(A_LeftLolipop))),
+                new WaitUntilCommand(() -> RobotTransitions.transitPose.isScheduled()).finallyDo(() -> {RobotControl.setDriveModeCommand(AutoBuilder.followPath(leftLolipop_B));}),
                 new WaitUntilCommand(RobotControl::isDriveCommandFinished).finallyDo(() -> RobotControl.setCurrentMode(alignWithB4)),
-                new WaitUntilCommand(() -> RobotControl.coralFloorPose.isScheduled()).finallyDo(() -> RobotControl.setDriveModeCommand(AutoBuilder.followPath(B_MiddleLolipop))),
-                new WaitUntilCommand(() -> RobotControl.transitPose.isScheduled()).finallyDo(() -> RobotControl.setCurrentMode(alignWithA2)),
-                new WaitUntilCommand(() -> RobotControl.coralFloorPose.isScheduled()).finallyDo(() -> RobotControl.setDriveModeCommand(AutoBuilder.followPath(A_RightLolipop))),
-                new WaitUntilCommand(() -> RobotControl.transitPose.isScheduled()).finallyDo(() -> RobotControl.setDriveModeCommand(AutoBuilder.followPath(RightLolipop_B))),
+                new WaitUntilCommand(() -> RobotTransitions.coralFloorPose.isScheduled()).finallyDo(() -> RobotControl.setDriveModeCommand(AutoBuilder.followPath(B_MiddleLolipop))),
+                new WaitUntilCommand(() -> RobotTransitions.transitPose.isScheduled()).finallyDo(() -> RobotControl.setCurrentMode(alignWithA2)),
+                new WaitUntilCommand(() -> RobotTransitions.coralFloorPose.isScheduled()).finallyDo(() -> RobotControl.setDriveModeCommand(AutoBuilder.followPath(A_RightLolipop))),
+                new WaitUntilCommand(() -> RobotTransitions.transitPose.isScheduled()).finallyDo(() -> RobotControl.setDriveModeCommand(AutoBuilder.followPath(RightLolipop_B))),
                 new WaitUntilCommand(RobotControl::isDriveCommandFinished).finallyDo(() -> RobotControl.setCurrentMode(alignWithB2))
             );
             
@@ -97,14 +100,14 @@ public class Autos {
             CoralReefPoseAuton L4Pose = new CoralReefPoseAuton("4");
 
             return new SequentialCommandGroup(
-                new InstantCommand(() -> {Robot.drivetrain.setPose(Robot.getAlliance() == Alliance.Blue ? rightReefStart_J.getStartingHolonomicPose().get() : flippedRightReefStart_J.getStartingHolonomicPose().get()); RobotControl.setCurrentMode(RobotControl.transitPose);}),
+                new InstantCommand(() -> {Robot.drivetrain.setPose(Robot.getAlliance() == Alliance.Blue ? rightReefStart_J.getStartingHolonomicPose().get() : flippedRightReefStart_J.getStartingHolonomicPose().get()); RobotControl.setCurrentMode(RobotTransitions.transitPose);}),
                 new InstantCommand(() -> {RobotControl.setDriveModeCommand(AutoBuilder.followPath(rightReefStart_J));}),
                 new WaitUntilCommand(RobotControl::isDriveCommandFinished).finallyDo(() -> RobotControl.setCurrentMode(alignWithJ4)),
-                new WaitUntilCommand(() -> RobotControl.coralFloorPose.isScheduled()).finallyDo(() -> {RobotControl.setCurrentMode(RobotControl.coralStationPose); RobotControl.setDriveModeCommand(AutoBuilder.followPath(J_CoralStation));}),
-                new WaitUntilCommand(() -> RobotControl.transitPose.isScheduled()).finallyDo(() -> {RobotControl.setDriveModeCommand(AutoBuilder.followPath(CoralStation_K));}),
+                new WaitUntilCommand(() -> RobotTransitions.coralFloorPose.isScheduled()).finallyDo(() -> {RobotControl.setCurrentMode(RobotTransitions.coralStationPose); RobotControl.setDriveModeCommand(AutoBuilder.followPath(J_CoralStation));}),
+                new WaitUntilCommand(() -> RobotTransitions.transitPose.isScheduled()).finallyDo(() -> {RobotControl.setDriveModeCommand(AutoBuilder.followPath(CoralStation_K));}),
                 new WaitUntilCommand(() -> RobotControl.isDriveCommandFinished()).finallyDo(() -> RobotControl.setCurrentMode(alignWithK4)),
-                new WaitUntilCommand(() -> RobotControl.coralFloorPose.isScheduled()).finallyDo(() -> {RobotControl.setCurrentMode(RobotControl.coralStationPose); RobotControl.setDriveModeCommand(AutoBuilder.followPath(K_CoralStation));}),
-                new WaitUntilCommand(() -> RobotControl.transitPose.isScheduled()).finallyDo(() -> {RobotControl.setDriveModeCommand(AutoBuilder.followPath(CoralStation_L));}),
+                new WaitUntilCommand(() -> RobotTransitions.coralFloorPose.isScheduled()).finallyDo(() -> {RobotControl.setCurrentMode(RobotTransitions.coralStationPose); RobotControl.setDriveModeCommand(AutoBuilder.followPath(K_CoralStation));}),
+                new WaitUntilCommand(() -> RobotTransitions.transitPose.isScheduled()).finallyDo(() -> {RobotControl.setDriveModeCommand(AutoBuilder.followPath(CoralStation_L));}),
                 new WaitUntilCommand(() -> RobotControl.isDriveCommandFinished()).finallyDo(() -> RobotControl.setCurrentMode(alignWithL4))
             );
         } catch (Exception e) {
@@ -131,14 +134,14 @@ public class Autos {
             CoralReefPoseAuton L4Pose = new CoralReefPoseAuton("4");
 
             return new SequentialCommandGroup(
-                new InstantCommand(() -> {Robot.drivetrain.setPose(Robot.getAlliance() == Alliance.Blue ? rightReefStart_E.getStartingHolonomicPose().get() : flippedRightReefStart_E.getStartingHolonomicPose().get()); RobotControl.setCurrentMode(RobotControl.transitPose);}),
+                new InstantCommand(() -> {Robot.drivetrain.setPose(Robot.getAlliance() == Alliance.Blue ? rightReefStart_E.getStartingHolonomicPose().get() : flippedRightReefStart_E.getStartingHolonomicPose().get()); RobotControl.setCurrentMode(RobotTransitions.transitPose);}),
                 new InstantCommand(() -> {RobotControl.setDriveModeCommand(AutoBuilder.followPath(rightReefStart_E));}),
                 new WaitUntilCommand(() -> RobotControl.isDriveCommandFinished()).finallyDo(() -> RobotControl.setCurrentMode(alignWithE4)),
-                new WaitUntilCommand(() -> RobotControl.coralFloorPose.isScheduled()).finallyDo(() -> {RobotControl.setCurrentMode(RobotControl.coralStationPose); RobotControl.setDriveModeCommand(AutoBuilder.followPath(E_CoralStation));}),
-                new WaitUntilCommand(() -> RobotControl.transitPose.isScheduled()).finallyDo(() -> {RobotControl.setDriveModeCommand(AutoBuilder.followPath(CoralStation_C));}),
+                new WaitUntilCommand(() -> RobotTransitions.coralFloorPose.isScheduled()).finallyDo(() -> {RobotControl.setCurrentMode(RobotTransitions.coralStationPose); RobotControl.setDriveModeCommand(AutoBuilder.followPath(E_CoralStation));}),
+                new WaitUntilCommand(() -> RobotTransitions.transitPose.isScheduled()).finallyDo(() -> {RobotControl.setDriveModeCommand(AutoBuilder.followPath(CoralStation_C));}),
                 new WaitUntilCommand(() -> RobotControl.isDriveCommandFinished()).finallyDo(() -> RobotControl.setCurrentMode(alignWithC4)),
-                new WaitUntilCommand(() -> RobotControl.coralFloorPose.isScheduled()).finallyDo(() -> {RobotControl.setCurrentMode(RobotControl.coralStationPose); RobotControl.setDriveModeCommand(AutoBuilder.followPath(C_CoralStation));}),
-                new WaitUntilCommand(() -> RobotControl.transitPose.isScheduled()).finallyDo(() -> {RobotControl.setDriveModeCommand(AutoBuilder.followPath(CoralStation_D));}),
+                new WaitUntilCommand(() -> RobotTransitions.coralFloorPose.isScheduled()).finallyDo(() -> {RobotControl.setCurrentMode(RobotTransitions.coralStationPose); RobotControl.setDriveModeCommand(AutoBuilder.followPath(C_CoralStation));}),
+                new WaitUntilCommand(() -> RobotTransitions.transitPose.isScheduled()).finallyDo(() -> {RobotControl.setDriveModeCommand(AutoBuilder.followPath(CoralStation_D));}),
                 new WaitUntilCommand(() -> RobotControl.isDriveCommandFinished()).finallyDo(() -> RobotControl.setCurrentMode(alignWithD4))
             );
         } catch (Exception e) {
@@ -151,8 +154,8 @@ public class Autos {
         CoralReefAlignPoseAuton alignWithH4 = new CoralReefAlignPoseAuton(ReefPosition.H, "4", false);
 
         return new SequentialCommandGroup(
-            new InstantCommand(() -> RobotControl.setCurrentMode(RobotControl.transitPose)),
-            new WaitUntilCommand(() -> RobotControl.transit.isScheduled()),
+            new InstantCommand(() -> RobotControl.setCurrentMode(RobotTransitions.transitPose)),
+            new WaitUntilCommand(() -> RobotStates.transit.isScheduled()),
             new InstantCommand(() -> RobotControl.setCurrentMode(alignWithH4))
         );
     }
@@ -162,8 +165,8 @@ public class Autos {
         CoralReefAlignPoseAuton alignWithG4 = new CoralReefAlignPoseAuton(ReefPosition.G, "4", true);
 
         return new SequentialCommandGroup(
-            new InstantCommand(() -> RobotControl.setCurrentMode(RobotControl.transitPose)),
-            new WaitUntilCommand(() -> RobotControl.transit.isScheduled()),
+            new InstantCommand(() -> RobotControl.setCurrentMode(RobotTransitions.transitPose)),
+            new WaitUntilCommand(() -> RobotStates.transit.isScheduled()),
             new InstantCommand(() -> RobotControl.setCurrentMode(alignWithG4))
         );
     }

@@ -51,6 +51,8 @@ import frc.robot.subsystems.manipulator.ManipulatorIO;
 import frc.robot.subsystems.manipulator.ManipulatorIOHardware;
 import frc.robot.subsystems.robotControl.RobotControl;
 import frc.robot.utils.GenericNTButton;
+import frc.robot.utils.RobotStates;
+import frc.robot.utils.RobotTransitions;
 import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -216,7 +218,7 @@ public class Robot extends LoggedRobot {
       SmartDashboard.putData("Field", drivetrain.getField());
 
       if (Constants.currentMode == Constants.Mode.SIM) {
-          RobotControl.setCurrentMode(RobotControl.initialTransitPose);
+          RobotControl.setCurrentMode(RobotTransitions.initialTransitPose);
       }
 
 //      dashboardController.addButton("test", "test", 0);
@@ -229,6 +231,8 @@ public class Robot extends LoggedRobot {
 //      } catch (ParseException e) {
 //          throw new RuntimeException(e);
 //      }
+      new RobotStates();
+      new RobotTransitions();
 
   }
 
@@ -289,7 +293,7 @@ public class Robot extends LoggedRobot {
       if (autonomousCommand != null) {
           autonomousCommand.cancel();
       }
-      RobotControl.setCurrentMode(RobotControl.initialTransitPose);
+      RobotControl.setCurrentMode(RobotTransitions.initialTransitPose);
       RobotControl.setDriveModeCommand(RobotControl.controllerDrive);  }
 
   /** This function is called periodically during operator control. */

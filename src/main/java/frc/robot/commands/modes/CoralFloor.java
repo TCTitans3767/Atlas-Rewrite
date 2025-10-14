@@ -7,7 +7,10 @@ import frc.robot.Robot;
 import frc.robot.TriggerBoard;
 import frc.robot.commands.lights.FlashLights;
 import frc.robot.subsystems.robotControl.RobotControl;
+import frc.robot.utils.RobotTransitions;
+import frc.robot.utils.State;
 
+@State
 public class CoralFloor extends Command{
     
     public CoralFloor() {
@@ -28,32 +31,32 @@ public class CoralFloor extends Command{
         if (!TriggerBoard.isL1Selected() && TriggerBoard.isCoralInManipulator()) {
             new FlashLights().schedule();
             Robot.intake.setWheelSpeed(-20);
-            RobotControl.setCurrentMode(RobotControl.transitPose);
+            RobotControl.setCurrentMode(RobotTransitions.transitPose);
             return;
         } else if (!TriggerBoard.isL1Selected() && TriggerBoard.isCoralOverrideButtonPressed()) {
-            RobotControl.setCurrentMode(RobotControl.transitPose);
+            RobotControl.setCurrentMode(RobotTransitions.transitPose);
             return;
         }
 
         if (TriggerBoard.isClimbButtonBoxButtonPressed()) {
             if (TriggerBoard.isClimbControllerButtonPressed()) {
-                RobotControl.setCurrentMode(RobotControl.climbPose);
+                RobotControl.setCurrentMode(RobotTransitions.climbPose);
             }
             return;
         }
 
         if (TriggerBoard.isAlgaeButtonPressed()) {
-            RobotControl.setCurrentMode(RobotControl.algaePickupPose);
+            RobotControl.setCurrentMode(RobotTransitions.algaePickupPose);
             return;
         }
 
         if (TriggerBoard.isAlgaeRemoveButtonPressed()) {
-            RobotControl.setCurrentMode(RobotControl.knockOffAlgaePoseManual);
+            RobotControl.setCurrentMode(RobotTransitions.knockOffAlgaePoseManual);
             return;
         }
 
         if (TriggerBoard.isL1Selected() && TriggerBoard.isCoralInIntake()) {
-            RobotControl.setCurrentMode(RobotControl.L1Pose);
+            RobotControl.setCurrentMode(RobotTransitions.l1Pose);
             Robot.intake.setWheelSpeed(0);
             Robot.manipulator.setSpeed(0);
             return;
@@ -62,7 +65,7 @@ public class CoralFloor extends Command{
         if(TriggerBoard.isCoralInManipulator()) {
             new FlashLights().schedule();
             Robot.intake.setWheelSpeed(-20);
-            RobotControl.setCurrentMode(RobotControl.transitPose);
+            RobotControl.setCurrentMode(RobotTransitions.transitPose);
             return;
         }
 

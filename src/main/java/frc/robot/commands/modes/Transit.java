@@ -6,7 +6,10 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.TriggerBoard;
 import frc.robot.subsystems.robotControl.RobotControl;
+import frc.robot.utils.RobotTransitions;
+import frc.robot.utils.State;
 
+@State
 public class Transit extends Command{
 
     
@@ -19,7 +22,7 @@ public class Transit extends Command{
 
         if (TriggerBoard.isClimbButtonBoxButtonPressed()) {
             if (TriggerBoard.isClimbControllerButtonPressed()) {
-                RobotControl.setCurrentMode(RobotControl.climbPose);
+                RobotControl.setCurrentMode(RobotTransitions.climbPose);
             }
             return;
         }
@@ -37,42 +40,42 @@ public class Transit extends Command{
             if (TriggerBoard.isCoralInManipulator()) {
 
                 if (TriggerBoard.isL1Selected()) {
-                    RobotControl.setCurrentMode(RobotControl.coralReefPose);
+                    RobotControl.setCurrentMode(RobotTransitions.coralReefPose);
                     return;
                 } else {
-                    RobotControl.setCurrentMode(RobotControl.coralReefAlignPose);
+                    RobotControl.setCurrentMode(RobotTransitions.coralReefAlignPose);
                     return;
                 }
 
             } else if (!TriggerBoard.isCoralInManipulator()) {
-                RobotControl.setCurrentMode(RobotControl.coralStationPose);
+                RobotControl.setCurrentMode(RobotTransitions.coralStationPose);
                 return;
             }
 
         } else if (TriggerBoard.isCoralOverrideButtonPressed()) {
 
             if (!TriggerBoard.isCoralInManipulator()) {
-                RobotControl.setCurrentMode(RobotControl.coralFloorPose);
+                RobotControl.setCurrentMode(RobotTransitions.coralFloorPose);
                 return;
             } else if (TriggerBoard.isCoralInManipulator()) {
-                RobotControl.setCurrentMode(RobotControl.transitPose);
+                RobotControl.setCurrentMode(RobotTransitions.transitPose);
                 return;
             }
 
         } else if (TriggerBoard.isAlgaeButtonPressed()) {
 
             if (!TriggerBoard.isAlgaeInIntake()) {
-                RobotControl.setCurrentMode(RobotControl.algaePickupPose);
+                RobotControl.setCurrentMode(RobotTransitions.algaePickupPose);
                 return;
             } else if (TriggerBoard.isAlgaeInIntake()) {
-                RobotControl.setCurrentMode(RobotControl.ejectAlgaePose);
+                RobotControl.setCurrentMode(RobotTransitions.ejectAlgaePose);
                 return;
             }
             
         }
 
         if (Robot.drivetrain.distanceTo(Robot.getAlliance() == Alliance.Blue ? Constants.Field.blueReefCenter : Constants.Field.redReefCenter) >= 1.3 && Robot.joystick.a().getAsBoolean()) {
-            RobotControl.setCurrentMode(RobotControl.knockOffAlgaePoseManual);
+            RobotControl.setCurrentMode(RobotTransitions.knockOffAlgaePoseManual);
         }   
 
     }

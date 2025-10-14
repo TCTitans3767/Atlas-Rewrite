@@ -6,7 +6,10 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
 import frc.robot.commands.Intake.SetIntakeWheelPower;
 import frc.robot.subsystems.robotControl.RobotControl;
+import frc.robot.utils.RobotTransitions;
+import frc.robot.utils.Transition;
 
+@Transition
 public class EjectAlgaePose extends SequentialCommandGroup{
     
     public EjectAlgaePose() {
@@ -17,7 +20,7 @@ public class EjectAlgaePose extends SequentialCommandGroup{
                 Robot.intake.setWheelPower(0);
             }),
             new WaitCommand(0.25),
-            new InstantCommand(() -> RobotControl.setCurrentMode(RobotControl.transitPose))
+            new InstantCommand(() -> RobotControl.setCurrentMode(RobotTransitions.transitPose))
         );
 
         addRequirements(Robot.arm, Robot.climber, Robot.intake, Robot.manipulator, Robot.elevator);

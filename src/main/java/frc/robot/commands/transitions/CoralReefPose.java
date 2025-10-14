@@ -17,7 +17,11 @@ import frc.robot.commands.arm.SetArmAngle;
 import frc.robot.commands.elevator.SetElevatorPosition;
 import frc.robot.commands.manipulator.SetManipulatorWheelSpeed;
 import frc.robot.subsystems.robotControl.RobotControl;
+import frc.robot.utils.RobotStates;
+import frc.robot.utils.RobotTransitions;
+import frc.robot.utils.Transition;
 
+@Transition
 public class CoralReefPose extends SequentialCommandGroup{
 
     public class L1 extends SequentialCommandGroup{
@@ -86,9 +90,9 @@ public class CoralReefPose extends SequentialCommandGroup{
             new InstantCommand(() -> {Robot.manipulator.setSpeed(0);}),
             new InstantCommand(() -> {
                 if (!TriggerBoard.isL1Selected()) {
-                    RobotControl.setCurrentMode(RobotControl.scoreCoralPose);
+                    RobotControl.setCurrentMode(RobotTransitions.scoreCoralPose);
                 } else {
-                    RobotControl.setCurrentMode(RobotControl.coralReef);
+                    RobotControl.setCurrentMode(RobotStates.coralReef);
                 }
             })
         );

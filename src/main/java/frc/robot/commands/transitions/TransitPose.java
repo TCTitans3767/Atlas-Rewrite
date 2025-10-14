@@ -19,7 +19,10 @@ import frc.robot.commands.arm.SetArmAngle;
 import frc.robot.commands.elevator.SetElevatorPosition;
 import frc.robot.commands.manipulator.SetManipulatorWheelSpeed;
 import frc.robot.subsystems.robotControl.RobotControl;
+import frc.robot.utils.RobotStates;
+import frc.robot.utils.Transition;
 
+@Transition
 public class TransitPose extends SequentialCommandGroup{
 
     private enum gamePieceState {
@@ -106,7 +109,7 @@ public class TransitPose extends SequentialCommandGroup{
 
         addCommands(
             new SelectCommand<gamePieceState>(commandMap, TransitPose::currentGamePieceState),
-            new InstantCommand(() -> RobotControl.setCurrentMode(RobotControl.transit))
+            new InstantCommand(() -> RobotControl.setCurrentMode(RobotStates.transit))
         );
 
         addRequirements(Robot.arm, Robot.climber, Robot.intake, Robot.manipulator, Robot.elevator);

@@ -16,7 +16,11 @@ import frc.robot.commands.arm.SetArmAngle;
 import frc.robot.commands.elevator.SetElevatorPosition;
 import frc.robot.subsystems.robotControl.RobotControl;
 import frc.robot.utils.DrivetrainPublisher;
+import frc.robot.utils.RobotStates;
+import frc.robot.utils.RobotTransitions;
+import frc.robot.utils.Transition;
 
+@Transition
 public class ScoreCoralPose extends SequentialCommandGroup {
 
     private class scoreAndTransit extends SequentialCommandGroup {
@@ -43,7 +47,7 @@ public class ScoreCoralPose extends SequentialCommandGroup {
                     }),
                     new InstantCommand(() -> {
                         Robot.manipulator.setSpeed(0);
-                        RobotControl.setCurrentMode(RobotControl.coralFloorPose);
+                        RobotControl.setCurrentMode(RobotTransitions.coralFloorPose);
                     }));
         }
     }
@@ -80,7 +84,7 @@ public class ScoreCoralPose extends SequentialCommandGroup {
                 new ConditionalCommand(
                         new InstantCommand(() -> {
                             Robot.manipulator.setSpeed(0);
-                            RobotControl.setCurrentMode(RobotControl.knockOffAlgaePose);
+                            RobotControl.setCurrentMode(RobotTransitions.knockOffAlgaePose);
                         }),
                         new scoreAndTransit(),
                         DashboardButtonBox::isAlgaeKnockoffOn));

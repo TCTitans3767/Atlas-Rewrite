@@ -5,7 +5,10 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.TriggerBoard;
 import frc.robot.subsystems.robotControl.RobotControl;
+import frc.robot.utils.RobotStates;
+import frc.robot.utils.Transition;
 
+@Transition
 public class CoralStationPose extends Command{
 
     public CoralStationPose() {
@@ -30,7 +33,7 @@ public class CoralStationPose extends Command{
 
     @Override
     public void end(boolean interrupted) {
-        RobotControl.setCurrentMode(RobotControl.coralStation);
+        RobotControl.setCurrentMode(RobotStates.coralStation);
     }
     
 }

@@ -4,7 +4,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.TriggerBoard;
 import frc.robot.subsystems.robotControl.RobotControl;
+import frc.robot.utils.RobotTransitions;
+import frc.robot.utils.State;
 
+@State
 public class CoralReef extends Command{
     
     public CoralReef() {
@@ -19,7 +22,7 @@ public class CoralReef extends Command{
         // }
 
         if (TriggerBoard.isCoralButtonPressed()) {
-            RobotControl.setCurrentMode(RobotControl.scoreCoralPose);
+            RobotControl.setCurrentMode(RobotTransitions.scoreCoralPose);
             return;
         }
 

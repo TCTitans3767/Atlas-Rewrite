@@ -3,7 +3,10 @@ package frc.robot.commands.transitions;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.subsystems.robotControl.RobotControl;
+import frc.robot.utils.RobotStates;
+import frc.robot.utils.Transition;
 
+@Transition
 public class AlgaePickupPose extends Command{
     
     public AlgaePickupPose() {
@@ -30,7 +33,7 @@ public class AlgaePickupPose extends Command{
 
     @Override
     public void end(boolean interrupted) {
-        RobotControl.setCurrentMode(RobotControl.algaePickup);
+        RobotControl.setCurrentMode(RobotStates.algaePickup);
     }
 
 }
