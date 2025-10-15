@@ -217,23 +217,12 @@ public class Robot extends LoggedRobot {
 
       SmartDashboard.putData("Field", drivetrain.getField());
 
+      RobotStates.initStates();
+      RobotTransitions.initTransitions();
+
       if (Constants.currentMode == Constants.Mode.SIM) {
           RobotControl.setCurrentMode(RobotTransitions.initialTransitPose);
       }
-
-//      dashboardController.addButton("test", "test", 0);
-//      dashboardController.addButton("test2", "test", 1);
-
-//      try {
-//          dashboardController.buildFromJSON();
-//      } catch (IOException e) {
-//          throw new RuntimeException(e);
-//      } catch (ParseException e) {
-//          throw new RuntimeException(e);
-//      }
-
-      RobotStates.initStates();
-      RobotTransitions.initTransitions();
 
   }
 
