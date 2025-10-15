@@ -39,7 +39,7 @@ public class StateAnnotationHandler extends AbstractProcessor {
         }
 
         TypeSpec.Builder stateClass = TypeSpec.classBuilder("RobotStates").addModifiers(Modifier.PUBLIC);
-        MethodSpec.Builder stateInitializer = MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC);
+        MethodSpec.Builder stateInitializer = MethodSpec.methodBuilder("initStates").addModifiers(Modifier.PUBLIC, Modifier.STATIC);
 
         TypeElement annotation = annotationOptional.get();
         roundEnv.getElementsAnnotatedWith(annotation)

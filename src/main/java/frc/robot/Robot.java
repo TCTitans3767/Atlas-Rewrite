@@ -231,8 +231,9 @@ public class Robot extends LoggedRobot {
 //      } catch (ParseException e) {
 //          throw new RuntimeException(e);
 //      }
-      new RobotStates();
-      new RobotTransitions();
+
+      RobotStates.initStates();
+      RobotTransitions.initTransitions();
 
   }
 
@@ -294,7 +295,8 @@ public class Robot extends LoggedRobot {
           autonomousCommand.cancel();
       }
       RobotControl.setCurrentMode(RobotTransitions.initialTransitPose);
-      RobotControl.setDriveModeCommand(RobotControl.controllerDrive);  }
+      RobotControl.setDriveModeCommand(RobotControl.controllerDrive);
+  }
 
   /** This function is called periodically during operator control. */
   @Override
