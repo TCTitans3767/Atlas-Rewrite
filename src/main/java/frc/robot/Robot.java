@@ -217,22 +217,12 @@ public class Robot extends LoggedRobot {
 
       SmartDashboard.putData("Field", drivetrain.getField());
 
+      RobotStates.initStates();
+      RobotTransitions.initTransitions();
+
       if (Constants.currentMode == Constants.Mode.SIM) {
           RobotControl.setCurrentMode(RobotTransitions.initialTransitPose);
       }
-
-//      dashboardController.addButton("test", "test", 0);
-//      dashboardController.addButton("test2", "test", 1);
-
-//      try {
-//          dashboardController.buildFromJSON();
-//      } catch (IOException e) {
-//          throw new RuntimeException(e);
-//      } catch (ParseException e) {
-//          throw new RuntimeException(e);
-//      }
-      new RobotStates();
-      new RobotTransitions();
 
   }
 
@@ -294,7 +284,8 @@ public class Robot extends LoggedRobot {
           autonomousCommand.cancel();
       }
       RobotControl.setCurrentMode(RobotTransitions.initialTransitPose);
-      RobotControl.setDriveModeCommand(RobotControl.controllerDrive);  }
+      RobotControl.setDriveModeCommand(RobotControl.controllerDrive);
+  }
 
   /** This function is called periodically during operator control. */
   @Override

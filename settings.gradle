@@ -26,6 +26,11 @@ pluginManagement {
     }
 }
 
+sourceControl {
+    gitRepository("https://github.com/TCTitans3767/robotControlAnnotations.git") {
+        producesModule("org.frc3767:robotControlAnnotations")
+    }
+}
+
 Properties props = System.getProperties();
 props.setProperty("org.gradle.internal.native.headers.unresolved.dependencies.ignore", "true");
-include 'robotControlAnnotations'
