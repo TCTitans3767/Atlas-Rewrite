@@ -3,6 +3,7 @@ plugins {
     id "edu.wpi.first.GradleRIO" version "2025.3.2"
     id "com.peterabeles.gversion" version "1.10"
     id "com.diffplug.spotless" version "6.12.0"
+
 }
 
 java {
@@ -96,7 +97,11 @@ dependencies {
     def akitJson = new groovy.json.JsonSlurper().parseText(new File(projectDir.getAbsolutePath() + "/vendordeps/AdvantageKit.json").text)
     annotationProcessor "org.littletonrobotics.akit:akit-autolog:$akitJson.version"
 
-    annotationProcessor project('robotControlAnnotations')
+    annotationProcessor('org.frc3767:robotControlAnnotations') {
+        version {
+            branch = "main"
+        }
+    }
 }
 
 test {
